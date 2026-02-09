@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: my-web
+  data:
+    redis:
+      host: 192.168.200.133
+      port: 6379
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 8
+          min-idle: 0
+          time-between-eviction-runs: 10s
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/tianmao?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: nanamijdsk520
+
