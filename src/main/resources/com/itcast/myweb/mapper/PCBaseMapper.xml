@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itcast.myweb.mapper.PCBaseMapper">
+
+    <!--    添加基础商品-->
+    <insert id="addCommodity" parameterType="com.itcast.myweb.DTO.PCBaseDTO">
+        insert into pc_base(name, image, base_price, category_id, is_on_sale, merchant_id)
+        values (#{name}, #{image}, #{basePrice}, #{categoryId}, #{isOnSale}, #{merchantId})
+    </insert>
+
+
+    <!--    条件分页查询商品-->
+    <select id="listCommodity" parameterType="com.itcast.myweb.DTO.PCBaseQueryDTO"
+            resultType="com.itcast.myweb.DTO.PCBaseDTO">
+        select merchant_id, name, image, base_price, category_id, is_on_sale from pc_base
+        <where>
+            <if test="name != null and name != ''">
+                and name like concat('%',#{name},'%')
+            </if>
+        </where>
+
+    </select>
+
+<!--    修改商品基本信息-->
+
+    <update id="updateCommodity" parameterType="com.itcast.myweb.DTO.PCBaseDTO">
+        update pc_base
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="image != null and image != ''">
+                image = #{image},
+            </if>
+            <if test="basePrice != null">
+                base_price = #{basePrice},
+            </if>
+            <if test="categoryId != null">
+                category_id = #{categoryId},
+            </if>
+            <if test="isOnSale != null">
+                is_on_sale = #{isOnSale},
+            </if>
+
+        </set>
+        where id = #{id}
+    </update>
+
+
+</mapper>

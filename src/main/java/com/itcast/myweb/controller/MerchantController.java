@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/tianmao/b")
+@RequestMapping("/tianmao/b/merchant")
 @Slf4j
 public class MerchantController {//商户控制类
 

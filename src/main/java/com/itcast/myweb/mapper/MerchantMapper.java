@@ -15,8 +15,6 @@ public interface MerchantMapper {
     // 商户注册
     void register(RegisterDTO registerDTO);
 
-    // 商户登录
-    void login();
 
     // 根据手机号查询商户
     Merchant getByPhone(String contactPhone);

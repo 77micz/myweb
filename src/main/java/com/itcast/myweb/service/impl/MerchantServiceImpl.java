@@ -34,7 +34,6 @@ public class MerchantServiceImpl implements MerchantService {// 商户服务实�
     // 获取验证码
     @Override
     public Result getCode(String contactPhone) {
-        log.info("获取验证码");
 
         //检查联系人手机号是否存在
         Merchant merchant = merchantMapper.getByPhone(contactPhone);
