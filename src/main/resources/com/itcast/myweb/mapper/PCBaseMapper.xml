@@ -4,8 +4,8 @@
 
     <!--    添加基础商品-->
     <insert id="addCommodity" parameterType="com.itcast.myweb.DTO.PCBaseDTO">
-        insert into pc_base(name, image, base_price, category_id, is_on_sale, merchant_id)
-        values (#{name}, #{image}, #{basePrice}, #{categoryId}, #{isOnSale}, #{merchantId})
+        insert into pc_base(merchant_id, name, image, base_price, category_id, template_id, is_on_sale)
+        values (#{merchantId}, #{name}, #{image}, #{basePrice}, #{categoryId}, #{templateId}, #{isOnSale})
     </insert>
 
 
@@ -17,6 +17,7 @@
             <if test="name != null and name != ''">
                 and name like concat('%',#{name},'%')
             </if>
+            and is_deleted = 0
         </where>
 
     </select>
@@ -37,6 +38,9 @@
             </if>
             <if test="categoryId != null">
                 category_id = #{categoryId},
+            </if>
+            <if test="templateId != null">
+                template_id = #{templateId},
             </if>
             <if test="isOnSale != null">
                 is_on_sale = #{isOnSale},

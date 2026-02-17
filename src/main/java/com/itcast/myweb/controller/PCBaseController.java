@@ -26,6 +26,18 @@ public class PCBaseController {
     }
 
 
+    //根据id查询
+    @GetMapping("/query")
+    public Result queryCommodity(@RequestParam Long id){
+
+        // 日志
+        log.info("根据id查询商品:{}", id);
+
+        //查询商品
+        return pcBaseService.queryCommodity(id);
+    }
+
+
     //分页查询商品
     @PostMapping("/list")
     public Result listCommodity(@RequestBody PCBaseQueryDTO pcBaseQueryDTO){

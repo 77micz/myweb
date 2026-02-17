@@ -93,13 +93,44 @@ public class PCBaseServiceImpl implements PCBaseService {// PC基础商品服务
         //日志
         log.info("删除商品,id={}", id);
 
-        // TODO 删除商品
+        // TODO 删除商品 软删除
+
+        //设置goods与spec_value为删除状态
+
+        //设置spec_value为删除状态
+
+        //设置goods为删除状态
+
+        //设置template_spec_item为删除状态
+
+        //设置template为删除状态
+
+        //设置该基础商品为删除状态
 
 
 
 
 
         return Result.ok();
+    }
+
+
+    // 根据id查询商品
+    @Override
+    public Result queryCommodity(Long id) {
+
+
+        PCBaseDTO pcBaseDTO = pcBaseMapper.queryCommodity(id);
+
+        //判断是否为空
+        if (pcBaseDTO == null) {
+            return Result.error("商品不存在");
+        }
+
+
+
+
+        return Result.ok(pcBaseDTO);
     }
 
 
