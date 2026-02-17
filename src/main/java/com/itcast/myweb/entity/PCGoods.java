@@ -13,17 +13,15 @@ public class PCGoods {// PC具体商品
 
     private Long baseId;// 基础商品ID
 
-    private String goodsName;// 商品名称
+    private Long goodsCode;// 商品编码
 
     private Long merchantId;// 商户ID
-
-    private String image;// 商品图片
 
     private Double price;// 商品价格
 
     private Integer stock;// 商品库存
 
-    private String specCombination;// 商品规格组合
+    private Integer isDeleted;// 是否删除,0:未删除,1:已删除
 
     private LocalDateTime createTime;// 创建时间
 

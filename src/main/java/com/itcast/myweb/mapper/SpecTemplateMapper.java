@@ -2,17 +2,20 @@ package com.itcast.myweb.mapper;
 
 
 import com.itcast.myweb.DTO.SpecTemplateDTO;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface SpecTemplateMapper {
 
 
     //新增模板
-    @Insert("insert into spec_template(template_name,category_id) values(#{templateName},#{categoryId})")
     void addSpecTemplate(SpecTemplateDTO specTemplateDTO);
 
 
-
+    //删除模板
+    @Update("update spec_template set is_deleted = 1 where id = #{id}")
+    void softDelSpecTemplate(Long id);
 }

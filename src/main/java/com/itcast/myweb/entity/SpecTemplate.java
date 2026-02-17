@@ -15,6 +15,8 @@ public class SpecTemplate {// 规格模板
 
     private Long categoryId;// 分类id
 
+    private Long baseId;// 关联基础商品id
+
     private LocalDateTime createTime;// 创建时间
 
     private LocalDateTime updateTime;// 更新时间

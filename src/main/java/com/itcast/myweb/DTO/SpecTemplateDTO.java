@@ -11,5 +11,7 @@ public class SpecTemplateDTO {// 规格模板DTO
 
     private Long categoryId;// 分类id
 
+    private Long baseId;// 基础商品id
+
 
 }

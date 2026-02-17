@@ -13,4 +13,6 @@ public interface SpecTemplateService {
     void addSpecTemplate(SpecTemplateDTO specTemplateDTO);
 
 
+    //删除规格模板
+    void softDelSpecTemplate(Long id);
 }

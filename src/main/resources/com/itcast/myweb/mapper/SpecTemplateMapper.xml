@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itcast.myweb.mapper.SpecTemplateMapper">
+
+
+<!--    新增模板-->
+    <insert id="addSpecTemplate" parameterType="com.itcast.myweb.DTO.SpecTemplateDTO">
+        insert into spec_template(template_name,category_id,base_id) values(#{templateName},#{categoryId},#{baseId})
+    </insert>
+
+
+</mapper>

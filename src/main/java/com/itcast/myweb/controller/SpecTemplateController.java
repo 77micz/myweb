@@ -6,10 +6,7 @@ import com.itcast.myweb.pojo.Result;
 import com.itcast.myweb.service.SpecTemplateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/tianmao/b/spec/template")
@@ -30,6 +27,20 @@ public class SpecTemplateController {// 天猫商品规格模板控制类
 
         //添加规格模板
         specTemplateService.addSpecTemplate(specTemplateDTO);
+
+        return Result.ok();
+    }
+
+
+    //删除规格模板
+    @DeleteMapping("/del/{id}")
+    public Result softDelSpecTemplate(@PathVariable Long id){
+
+        // 日志
+        log.info("删除规格模板:{}", id);
+
+        //删除规格模板
+        specTemplateService.softDelSpecTemplate(id);
 
         return Result.ok();
     }

@@ -22,10 +22,19 @@ public class SpecTemplateServiceImpl implements SpecTemplateService {
     @Override
     public void addSpecTemplate(SpecTemplateDTO specTemplateDTO) {
 
-        // 日志
-        log.info("添加规格模板:{}", specTemplateDTO);
-
         specTemplateMapper.addSpecTemplate(specTemplateDTO);
+
+    }
+
+
+    // 删除规格模板
+    @Override
+    public void softDelSpecTemplate(Long id) {
+
+        //设置删除状态
+
+        //调用删除
+        specTemplateMapper.softDelSpecTemplate(id);
 
     }
 

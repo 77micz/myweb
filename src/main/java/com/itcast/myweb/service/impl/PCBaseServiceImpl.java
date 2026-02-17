@@ -96,13 +96,7 @@ public class PCBaseServiceImpl implements PCBaseService {// PC基础商品服务
         // TODO 删除商品
 
 
-        //根据id查具体商品，得到具体商品id集合
 
-        //批量删除商品关联的规格值
-
-        //批量删除商品
-
-        //删除基础商品
 
 
         return Result.ok();

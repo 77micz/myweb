@@ -20,6 +20,14 @@ public class PCBase {// PC基础商品
 
     private Long categoryId;// 商品分类id
 
+    private Long templateId;// 使用的规格模板id
+
+    private Integer isDeleted;// 是否删除,0:未删除,1:已删除
+
+    private LocalDateTime deletedTime;// 删除时间
+
+    private Long deletedBy;// 删除人id
+
     private Integer isOnSale;// 是否上架,0:下架,1:上架
 
     private LocalDateTime createTime;// 创建时间
