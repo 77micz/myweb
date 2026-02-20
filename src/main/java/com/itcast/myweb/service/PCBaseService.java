@@ -19,7 +19,7 @@ public interface PCBaseService {// PC基础商品服务
     Result updateCommodity(PCBaseDTO pcBaseDTO);
 
     //删除商品
-    Result deleteCommodity(Long id);
+    Result softDeleteCommodity(Long id);
 
     //根据id查询商品
     Result queryCommodity(Long id);

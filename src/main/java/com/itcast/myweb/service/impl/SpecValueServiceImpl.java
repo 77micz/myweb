@@ -70,10 +70,10 @@ public class SpecValueServiceImpl implements SpecValueService {
 
     // 删除规格值
     @Override
-    public void delSpecValue(Long id) {
+    public void softDelSpecValue(Long id) {
 
         //删除
-        specValueMapper.delSpecValue(id);
+        specValueMapper.softDelSpecValue(id);
 
     }
 

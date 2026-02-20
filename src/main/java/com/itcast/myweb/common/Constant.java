@@ -11,6 +11,10 @@ public class Constant {
 
     public static final Long CODE_TIME = 5L;// 验证码过期时间5分钟
 
+    public static final Integer LOGICAL_DELETED = 1;// 逻辑删除
+
+    public static final Integer IS_NOT_DELETED = 0;// 非逻辑删除
+
 
 
 

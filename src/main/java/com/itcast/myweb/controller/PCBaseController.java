@@ -59,7 +59,7 @@ public class PCBaseController {
     //删除基础商品
     @DeleteMapping("/delete/{id}")
     public Result deleteCommodity(@PathVariable Long id){
-        return pcBaseService.deleteCommodity(id);
+        return pcBaseService.softDeleteCommodity(id);
     }
 
 

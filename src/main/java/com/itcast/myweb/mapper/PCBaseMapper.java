@@ -5,6 +5,7 @@ import com.itcast.myweb.DTO.PCBaseDTO;
 import com.itcast.myweb.DTO.PCBaseQueryDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -24,6 +25,11 @@ public interface PCBaseMapper {// PC基础商品Mapper
     void updateCommodity(PCBaseDTO pcBaseDTO);
 
     //查询商品
-    @Select("select * from pc_base where id=#{id} and is_deleted=0")
+    @Select("select * from pc_base where id=#{id} and is_deleted=#{T(com.itcast.myweb.common.Constant).IS_NOT_DELETED}")
     PCBaseDTO queryCommodity(Long id);
+
+
+    // 删除商品
+    @Update("update pc_base set is_deleted=#{T(com.itcast.myweb.common.Constant).LOGICAL_DELETED} where id = #{id}")
+    void softDelCommodity(Long id);
 }

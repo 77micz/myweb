@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itcast.myweb.mapper.GoodsSpecValueMapper">
+
+
+
+<!--    根据ids批量软删除spec_value-->
+    <update id="batchSoftDelGoodsSpecValue">
+        update goods_spec_value
+        set is_deleted = #{T(com.itcast.myweb.common.Constant).LOGICAL_DELETED}
+        where goods_id in
+        <foreach collection="ids" item="id" separator="," close=")" open="(">
+            #{id}
+        </foreach>
+    </update>
+
+
+<!--    根据goodsIds获取所有关联的spec_value_id-->
+    <select id="getIdsByIds" resultType="java.lang.Long" parameterType="java.util.List">
+        select spec_value_id
+        from goods_spec_value
+        where goods_id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+
+
+<!--    遍历specValueIds批量插入-->
+    <insert id="addGoodsSpecValue">
+        insert into goods_spec_value(goods_id,spec_value_id) values
+        <foreach collection="specValueIds" item="item" separator=",">
+            (#{goodsId},#{item})
+        </foreach>
+    </insert>
+
+
+
+
+</mapper>

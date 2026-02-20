@@ -5,10 +5,9 @@ import com.github.pagehelper.PageHelper;
 import com.itcast.myweb.DTO.PCBaseDTO;
 import com.itcast.myweb.DTO.PCBasePageDTO;
 import com.itcast.myweb.DTO.PCBaseQueryDTO;
-import com.itcast.myweb.mapper.PCBaseMapper;
+import com.itcast.myweb.mapper.*;
 import com.itcast.myweb.pojo.Result;
 import com.itcast.myweb.service.PCBaseService;
-import com.itcast.myweb.utils.MerchantHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,12 +21,31 @@ import java.util.List;
 public class PCBaseServiceImpl implements PCBaseService {// PC基础商品服务实现类
 
 
-//    @Autowired
-    private PCBaseMapper pcBaseMapper;
+    @Autowired
+    private PCBaseMapper pcBaseMapper;// PC基础商品Mapper
 
-    public PCBaseServiceImpl(PCBaseMapper pcBaseMapper) {
-        this.pcBaseMapper = pcBaseMapper;
-    }
+    @Autowired
+    private PCGoodsMapper pcGoodsMapper;// PC商品Mapper
+
+
+
+    @Autowired
+    private GoodsSpecValueMapper goodsSpecValueMapper;//Goods-SpecValue表Mapper
+
+    @Autowired
+    private SpecValueMapper specValueMapper;//SpecValue表Mapper
+
+
+    @Autowired
+    private TemplateSpecItemMapper templateSpecItemMapper;//Template-SpecItem表Mapper
+
+    @Autowired
+    private TemplateMapper templateMapper;//Template表Mapper
+
+
+//    public PCBaseServiceImpl(PCBaseMapper pcBaseMapper) {
+//        this.pcBaseMapper = pcBaseMapper;
+//    }
 
 
     // 添加商品
@@ -84,28 +102,60 @@ public class PCBaseServiceImpl implements PCBaseService {// PC基础商品服务
     }
 
 
-    // 删除商品
+
+    /**
+     * 删除商品
+     * 软删除
+     * @param id 商品id
+     * @return 删除结果
+     */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Result deleteCommodity(Long id) {
+    public Result softDeleteCommodity(Long id) {
 
 
         //日志
         log.info("删除商品,id={}", id);
 
-        // TODO 删除商品 软删除
 
-        //设置goods与spec_value为删除状态
+        //1.设置goods与spec_value为删除状态
 
-        //设置spec_value为删除状态
+        //获取所有商品id
+        List<Long> goodsIds = pcGoodsMapper.getIdsByBaseId(id);
 
-        //设置goods为删除状态
+        //获取所有商品规格值id
+        List<Long> specValueIds = goodsSpecValueMapper.getIdsByIds(goodsIds);
 
-        //设置template_spec_item为删除状态
+        //批量逻辑删除
+        goodsSpecValueMapper.batchSoftDelGoodsSpecValue(goodsIds);
 
-        //设置template为删除状态
 
-        //设置该基础商品为删除状态
+
+        //2.设置spec_value为删除状态
+        specValueMapper.batchSoftDelSpecValue(specValueIds);
+
+
+
+
+        //3.设置goods为删除状态
+        pcGoodsMapper.batchSoftDelGoods(id);
+
+
+
+        //4.设置template_spec_item为删除状态
+
+        //获取模板id
+        Long templateId = pcBaseMapper.queryCommodity(id).getTemplateId();
+
+        //批量逻辑删除
+        templateSpecItemMapper.softDelTemplateSpecValue(templateId);
+
+
+        //5.设置template为删除状态
+        templateMapper.softDelTemplate(templateId);
+
+        //6.设置该基础商品为删除状态
+        pcBaseMapper.softDelCommodity(id);
 
 
 

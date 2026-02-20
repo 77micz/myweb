@@ -19,7 +19,7 @@ public interface SpecValueService {// 规格值服务
     SpecValue querySpecValue(Long id);
 
     // 删除规格值
-    void delSpecValue(Long id);
+    void softDelSpecValue(Long id);
 
 
     // 修改规格值

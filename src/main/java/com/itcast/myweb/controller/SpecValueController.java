@@ -71,7 +71,7 @@ public class SpecValueController {// 天猫商品规格值控制类
         log.info("根据id删除规格值:{}", id);
 
         // 删除
-        specValueService.delSpecValue(id);
+        specValueService.softDelSpecValue(id);
 
         return Result.ok();
     }

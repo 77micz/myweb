@@ -16,6 +16,6 @@ public interface SpecTemplateMapper {
 
 
     //删除模板
-    @Update("update spec_template set is_deleted = 1 where id = #{id}")
+    @Update("update spec_template set is_deleted = #{T(com.itcast.myweb.common.Constant).LOGICAL_DELETED} where id = #{id}")
     void softDelSpecTemplate(Long id);
 }

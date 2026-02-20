@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itcast.myweb.mapper.TemplateSpecItemMapper">
+
+
+
+<!--    遍历List批量插入-->
+    <insert id="addTemplateSpecItem">
+        insert into spec_template_spec_item(spec_template_id,spec_item_id) values
+        <if test="specItemIds != null and !specItemIds.isEmpty()">
+            <foreach collection="specItemIds" item="item" separator="," index="index">
+                (#{specTemplateId},#{item})
+            </foreach>
+        </if>
+    </insert>
+
+
+
+</mapper>

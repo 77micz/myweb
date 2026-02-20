@@ -39,6 +39,15 @@
     </update>
 
 
+<!--    根据ids批量删除规格值-->
+    <update id="batchSoftDelSpecValue">
+        update spec_value set is_deleted = #{T(com.itcast.myweb.common.Constant).LOGICAL_DELETED} where id in
+        <foreach item="item" collection="list" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </update>
+
+
 
 
 </mapper>

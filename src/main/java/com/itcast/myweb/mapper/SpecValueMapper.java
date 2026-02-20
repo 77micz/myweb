@@ -3,10 +3,7 @@ package com.itcast.myweb.mapper;
 
 import com.itcast.myweb.DTO.SpecValueDTO;
 import com.itcast.myweb.entity.SpecValue;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -26,9 +23,13 @@ public interface SpecValueMapper {
     SpecValue querySpecValue(Long id);
 
 
-    // 删除规格值
-    @Delete("delete from spec_value where id = #{id}")
-    void delSpecValue(Long id);
+    // 删除规格值 软删除
+    @Update("update spec_value set is_deleted=#{T(com.itcast.myweb.common.Constant).LOGICAL_DELETED} where id=#{id}")
+    void softDelSpecValue(Long id);
+
+
+    //批量删除
+    void batchSoftDelSpecValue(List<Long> ids);
 
 
     // 修改规格值
