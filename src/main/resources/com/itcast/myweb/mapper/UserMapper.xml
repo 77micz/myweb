@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itcast.myweb.mapper.UserMapper">
+
+
+
+<!--    根据id查询用户-->
+    <select id="getUser" parameterType="java.lang.Long" resultType="com.itcast.myweb.DTO.UserDTO">
+        select id,name, password, gender, phone, default_address_id, nick_name, image,email from tb_user where id = #{id} and is_deleted=#{status}
+    </select>
+
+
+
+<!--    更新用户-->
+    <update id="updateUser" parameterType="com.itcast.myweb.DTO.UserDTO">
+        update tb_user
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="gender != null and gender != ''">
+                gender = #{gender},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="defaultAddressId != null">
+                default_address_id = #{defaultAddressId},
+            </if>
+            <if test="nickName != null and nickName != ''">
+                nick_name = #{nickName},
+            </if>
+            <if test="image != null and image != ''">
+                image = #{image},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="isDelete != null">
+                is_deleted = #{isDelete},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+<!--    根据手机号获取用户-->
+    <select id="getUserByPhone" resultType="com.itcast.myweb.DTO.UserDTO">
+        select id,nick_name, image from tb_user where phone = #{phone} and is_deleted=#{status}
+    </select>
+
+
+<!--    创建用户-->
+    <insert id="createUser" parameterType="com.itcast.myweb.entity.User" useGeneratedKeys="true">
+        insert into tb_user(phone,password,nick_name,image) values(#{phone},#{password},#{nickName},#{image})
+    </insert>
+
+
+
+
+</mapper>

@@ -1,4 +1,4 @@
-package com.itcast.myweb.controller;
+package com.itcast.myweb.controller.entity;
 
 
 import com.itcast.myweb.DTO.PCBaseDTO;
@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/tianmao/b/commodity/base/pc")
+@RequestMapping("/tianmao/entity/commodity/base/pc")
 @Slf4j
 public class PCBaseController {
 

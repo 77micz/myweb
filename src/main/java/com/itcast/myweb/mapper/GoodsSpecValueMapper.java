@@ -15,8 +15,8 @@ public interface GoodsSpecValueMapper {//操作商品-规格值表的接口
 
 
     //根据商品id逻辑删除商品规格值
-    @Update("update goods_spec_value set is_deleted = #{T(com.itcast.myweb.common.Constant).LOGICAL_DELETED} where goods_id = #{id}")
-    void softDelGoodsSpecValue(Long id);
+    @Update("update goods_spec_value set is_deleted = #{LOGICAL_DELETED} where goods_id = #{id}")
+    void softDelGoodsSpecValue(Long id, Integer LOGICAL_DELETED);
 
 
     //根据商品id返回商品规格值id

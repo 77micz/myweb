@@ -1,4 +1,4 @@
-package com.itcast.myweb.controller;
+package com.itcast.myweb.controller.entity;
 
 
 import com.itcast.myweb.DTO.GoodsSpecValueDTO;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/tianmao/b/spec/goodsvalue")
+@RequestMapping("/tianmao/entity/spec/goodsvalue")
 @Slf4j
 public class GoodsSpecValueController {
 

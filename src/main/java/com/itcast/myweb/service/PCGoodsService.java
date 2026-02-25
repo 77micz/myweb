@@ -23,4 +23,7 @@ public interface PCGoodsService {// PC商品服务
 
     //删除商品
     void delCommodity(Long id);
+
+    //恢复商品
+    void restoreCommodity(Long id);
 }

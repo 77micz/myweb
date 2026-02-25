@@ -1,23 +1,26 @@
-package com.itcast.myweb.controller;
+package com.itcast.myweb.controller.entity;
+
 
 
 import com.itcast.myweb.DTO.PCGoodsDTO;
 import com.itcast.myweb.pojo.Result;
-import com.itcast.myweb.service.PCBaseService;
 import com.itcast.myweb.service.PCGoodsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/tianmao/b/commodity/specific/pc")
+@RequestMapping("/tianmao/entity/commodity/specific/pc")
 @Slf4j
 public class PCGoodsController {// PC商品控制器
 
     @Autowired
     private PCGoodsService pcGoodsService;
+
+
 
 
     //添加商品
@@ -40,6 +43,9 @@ public class PCGoodsController {// PC商品控制器
 
         //日志
         log.info("根据id查询商品:{}", id);
+
+
+
 
         PCGoodsDTO pcGoodsDTO = pcGoodsService.queryCommodity(id);
 
@@ -67,6 +73,7 @@ public class PCGoodsController {// PC商品控制器
 
 
     //修改商品
+    @Transactional
     @PutMapping("/update")
     public Result updateCommodity(@RequestBody PCGoodsDTO pcGoodsDTO){
 
@@ -74,6 +81,7 @@ public class PCGoodsController {// PC商品控制器
         log.info("修改商品:{}", pcGoodsDTO);
 
         pcGoodsService.updateCommodity(pcGoodsDTO);
+
 
 
         return Result.ok();
@@ -88,6 +96,22 @@ public class PCGoodsController {// PC商品控制器
         log.info("删除商品:{}", id);
 
         pcGoodsService.delCommodity(id);
+
+
+
+        return Result.ok();
+    }
+
+
+    //恢复商品
+    @PostMapping("/restore/{id}")
+    public Result restoreCommodity(@PathVariable Long id){
+
+        //日志
+        log.info("恢复商品:{}", id);
+
+        pcGoodsService.restoreCommodity(id);
+
 
 
         return Result.ok();

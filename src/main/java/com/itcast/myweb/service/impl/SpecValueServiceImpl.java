@@ -1,6 +1,7 @@
 package com.itcast.myweb.service.impl;
 
 import com.itcast.myweb.DTO.SpecValueDTO;
+import com.itcast.myweb.common.Constant;
 import com.itcast.myweb.entity.SpecValue;
 import com.itcast.myweb.mapper.SpecValueGoodsMapper;
 import com.itcast.myweb.mapper.SpecValueMapper;
@@ -73,7 +74,7 @@ public class SpecValueServiceImpl implements SpecValueService {
     public void softDelSpecValue(Long id) {
 
         //删除
-        specValueMapper.softDelSpecValue(id);
+        specValueMapper.softDelSpecValue(id, Constant.LOGICAL_DELETED);
 
     }
 

@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+# 忽略整个测试目录（推荐，适合所有测试类）
+src/test/

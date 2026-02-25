@@ -9,8 +9,8 @@ public interface TemplateMapper {
 
 
     //删除模板
-    @Update("update spec_template set is_deleted = #{T(com.itcast.myweb.common.Constant).LOGICAL_DELETED} where id = #{id}")
-    void softDelTemplate(Long id);
+    @Update("update spec_template set is_deleted = #{LOGICAL_DELETED} where id = #{id}")
+    void softDelTemplate(Long id, Integer LOGICAL_DELETED);
 
 
 

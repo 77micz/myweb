@@ -1,11 +1,13 @@
 package com.itcast.myweb.entity;
 
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 public class User {// 用户
 
 
@@ -24,6 +26,10 @@ public class User {// 用户
     private String nickName;// 昵称
 
     private String image;// 头像
+
+    private String email;// 邮箱
+
+    private Integer isDeleted;// 逻辑删除,0-未删除,1-已删除
 
     private LocalDateTime createTime;// 创建时间
 

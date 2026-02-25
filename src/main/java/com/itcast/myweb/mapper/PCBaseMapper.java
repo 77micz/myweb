@@ -25,11 +25,11 @@ public interface PCBaseMapper {// PC基础商品Mapper
     void updateCommodity(PCBaseDTO pcBaseDTO);
 
     //查询商品
-    @Select("select * from pc_base where id=#{id} and is_deleted=#{T(com.itcast.myweb.common.Constant).IS_NOT_DELETED}")
-    PCBaseDTO queryCommodity(Long id);
+    @Select("select * from pc_base where id=#{id} and is_deleted=#{IS_NOT_DELETED}")
+    PCBaseDTO queryCommodity(Long id,Integer IS_NOT_DELETED);
 
 
     // 删除商品
-    @Update("update pc_base set is_deleted=#{T(com.itcast.myweb.common.Constant).LOGICAL_DELETED} where id = #{id}")
-    void softDelCommodity(Long id);
+    @Update("update pc_base set is_deleted=#{LOGICAL_DELETED} where id = #{id}")
+    void softDelCommodity(Long id, Integer LOGICAL_DELETED);
 }

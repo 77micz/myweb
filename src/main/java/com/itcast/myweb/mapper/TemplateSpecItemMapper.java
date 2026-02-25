@@ -11,8 +11,8 @@ import java.util.List;
 public interface TemplateSpecItemMapper {
 
     //软删除
-    @Update("update spec_template_spec_item set is_deleted = #{T(com.itcast.myweb.common.Constant).LOGICAL_DELETED} where spec_template_id = #{id}")
-    void softDelTemplateSpecValue(Long id);
+    @Update("update spec_template_spec_item set is_deleted = #{LOGICAL_DELETED} where spec_template_id = #{id}")
+    void softDelTemplateSpecValue(Long id,Integer LOGICAL_DELETED);
 
 
 

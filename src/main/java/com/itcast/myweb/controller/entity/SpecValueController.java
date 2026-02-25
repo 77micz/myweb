@@ -1,4 +1,4 @@
-package com.itcast.myweb.controller;
+package com.itcast.myweb.controller.entity;
 
 
 import com.itcast.myweb.DTO.SpecValueDTO;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/tianmao/b/spec/value")
+@RequestMapping("/tianmao/entity/spec/value")
 @Slf4j
 public class SpecValueController {// 天猫商品规格值控制类
 

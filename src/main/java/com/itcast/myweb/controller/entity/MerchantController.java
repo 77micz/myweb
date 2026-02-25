@@ -1,4 +1,4 @@
-package com.itcast.myweb.controller;
+package com.itcast.myweb.controller.entity;
 
 
 import cn.hutool.core.util.PhoneUtil;
@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/tianmao/b/merchant")
+@RequestMapping("/tianmao/entity/merchant")
 @Slf4j
 public class MerchantController {//商户控制类
 

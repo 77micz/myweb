@@ -24,8 +24,8 @@ public interface SpecValueMapper {
 
 
     // 删除规格值 软删除
-    @Update("update spec_value set is_deleted=#{T(com.itcast.myweb.common.Constant).LOGICAL_DELETED} where id=#{id}")
-    void softDelSpecValue(Long id);
+    @Update("update spec_value set is_deleted=#{LOGICAL_DELETED} where id=#{id}")
+    void softDelSpecValue(Long id, Integer LOGICAL_DELETED);
 
 
     //批量删除

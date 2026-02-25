@@ -1,4 +1,4 @@
-package com.itcast.myweb.controller;
+package com.itcast.myweb.controller.entity;
 
 
 import com.itcast.myweb.DTO.SpecItemDTO;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/tianmao/b/spec/item")
+@RequestMapping("/tianmao/entity/spec/item")
 @Slf4j
 public class SpecItemController {// 天猫商品规格项控制类
 

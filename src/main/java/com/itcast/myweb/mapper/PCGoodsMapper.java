@@ -9,6 +9,8 @@ import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
+import static com.itcast.myweb.common.Constant.LOGICAL_DELETED;
+
 @Mapper
 public interface PCGoodsMapper {
 
@@ -18,8 +20,8 @@ public interface PCGoodsMapper {
 
 
     //查询商品
-    @Select("select * from pc_goods where id = #{id} and is_deleted=#{T(com.itcast.myweb.common.Constant).IS_NOT_DELETED}")
-    PCGoodsDTO queryGoods(Long id);
+    @Select("select * from pc_goods where id = #{id} and is_deleted=#{IS_NOT_DELETED}")
+    PCGoodsDTO queryGoods(Long id, Integer IS_NOT_DELETED);
 
 
     //查询baseId所有商品
@@ -31,12 +33,12 @@ public interface PCGoodsMapper {
 
 
     //软删除
-    @Update("update pc_goods set is_deleted=#{T(com.itcast.myweb.common.Constant).LOGICAL_DELETED} where id = #{id}")
-    void softDelGoods(Long id);
+    @Update("update pc_goods set is_deleted=#{LOGICAL_DELETED} where id = #{id}")
+    void softDelGoods(Long id,Integer LOGICAL_DELETED);
 
     //批量删除
-    @Update("update pc_goods set is_deleted=#{T(com.itcast.myweb.common.Constant).LOGICAL_DELETED} where base_id = #{baseId}")
-    void batchSoftDelGoods(Long baseId);
+    @Update("update pc_goods set is_deleted=#{LOGICAL_DELETED} where base_id = #{baseId}")
+    void batchSoftDelGoods(Long baseId,Integer LOGICAL_DELETED);
 
 
 

@@ -17,7 +17,7 @@
             <if test="name != null and name != ''">
                 and name like concat('%',#{name},'%')
             </if>
-            and is_deleted = #{T(com.itcast.myweb.common.Constant).IS_NOT_DELETED}
+            and is_deleted = #{IS_NOT_DELETED}
         </where>
 
     </select>
@@ -47,7 +47,7 @@
             </if>
 
         </set>
-        where id = #{id} and is_deleted = #{T(com.itcast.myweb.common.Constant).IS_NOT_DELETED}
+        where id = #{id} and is_deleted = #{IS_NOT_DELETED}
     </update>
 
 

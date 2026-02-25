@@ -5,7 +5,7 @@
 
 <!--    根据base_id查询所有goods-->
     <select id="listGoods" resultType="com.itcast.myweb.DTO.PCGoodsDTO">
-        select * from pc_goods where base_id = #{baseId} and is_deleted = #{T(com.itcast.myweb.common.Constant).IS_NOT_DELETED}
+        select * from pc_goods where base_id = #{baseId} and is_deleted = #{IS_NOT_DELETED}
     </select>
 
 

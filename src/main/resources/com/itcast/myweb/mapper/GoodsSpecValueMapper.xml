@@ -7,7 +7,7 @@
 <!--    根据ids批量软删除spec_value-->
     <update id="batchSoftDelGoodsSpecValue">
         update goods_spec_value
-        set is_deleted = #{T(com.itcast.myweb.common.Constant).LOGICAL_DELETED}
+        set is_deleted = #{LOGICAL_DELETED}
         where goods_id in
         <foreach collection="ids" item="id" separator="," close=")" open="(">
             #{id}

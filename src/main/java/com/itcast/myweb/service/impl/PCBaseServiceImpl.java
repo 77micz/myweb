@@ -1,10 +1,12 @@
 package com.itcast.myweb.service.impl;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.itcast.myweb.DTO.PCBaseDTO;
 import com.itcast.myweb.DTO.PCBasePageDTO;
 import com.itcast.myweb.DTO.PCBaseQueryDTO;
+import com.itcast.myweb.common.Constant;
 import com.itcast.myweb.mapper.*;
 import com.itcast.myweb.pojo.Result;
 import com.itcast.myweb.service.PCBaseService;
@@ -41,6 +43,12 @@ public class PCBaseServiceImpl implements PCBaseService {// PC基础商品服务
 
     @Autowired
     private TemplateMapper templateMapper;//Template表Mapper
+
+
+    @Autowired
+    private Cache<String,PCBaseDTO> pcBaseCache;//PC基础商品缓存
+
+
 
 
 //    public PCBaseServiceImpl(PCBaseMapper pcBaseMapper) {
@@ -88,6 +96,7 @@ public class PCBaseServiceImpl implements PCBaseService {// PC基础商品服务
 
 
     //修改商品基本信息
+    @Transactional
     @Override
     public Result updateCommodity(PCBaseDTO pcBaseDTO) {
 
@@ -96,6 +105,10 @@ public class PCBaseServiceImpl implements PCBaseService {// PC基础商品服务
 
         //修改商品
         pcBaseMapper.updateCommodity(pcBaseDTO);
+
+        //使缓存失效
+        pcBaseCache.invalidate(Constant.PC_BASE_CACHE_KEY+pcBaseDTO.getId());
+
 
         return Result.ok();
 
@@ -138,24 +151,24 @@ public class PCBaseServiceImpl implements PCBaseService {// PC基础商品服务
 
 
         //3.设置goods为删除状态
-        pcGoodsMapper.batchSoftDelGoods(id);
+        pcGoodsMapper.batchSoftDelGoods(id, Constant.LOGICAL_DELETED);
 
 
 
         //4.设置template_spec_item为删除状态
 
         //获取模板id
-        Long templateId = pcBaseMapper.queryCommodity(id).getTemplateId();
+        Long templateId = pcBaseMapper.queryCommodity(id, Constant.IS_NOT_DELETED).getTemplateId();
 
         //批量逻辑删除
-        templateSpecItemMapper.softDelTemplateSpecValue(templateId);
+        templateSpecItemMapper.softDelTemplateSpecValue(templateId,Constant.LOGICAL_DELETED);
 
 
         //5.设置template为删除状态
-        templateMapper.softDelTemplate(templateId);
+        templateMapper.softDelTemplate(templateId,Constant.LOGICAL_DELETED);
 
         //6.设置该基础商品为删除状态
-        pcBaseMapper.softDelCommodity(id);
+        pcBaseMapper.softDelCommodity(id,Constant.LOGICAL_DELETED);
 
 
 
@@ -169,8 +182,18 @@ public class PCBaseServiceImpl implements PCBaseService {// PC基础商品服务
     @Override
     public Result queryCommodity(Long id) {
 
+        //缓存key
+        String key = Constant.PC_BASE_CACHE_KEY+id;
 
-        PCBaseDTO pcBaseDTO = pcBaseMapper.queryCommodity(id);
+
+        // TODO 添加缓存
+
+
+        //查询进程缓存
+        PCBaseDTO pcBaseDTO = pcBaseCache.get(key,tempKey-> pcBaseMapper.queryCommodity(id, Constant.IS_NOT_DELETED));
+
+
+//        PCBaseDTO pcBaseDTO = pcBaseMapper.queryCommodity(id);
 
         //判断是否为空
         if (pcBaseDTO == null) {

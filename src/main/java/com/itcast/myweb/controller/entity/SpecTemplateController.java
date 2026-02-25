@@ -1,4 +1,4 @@
-package com.itcast.myweb.controller;
+package com.itcast.myweb.controller.entity;
 
 
 import com.itcast.myweb.DTO.SpecTemplateDTO;
@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/tianmao/b/spec/template")
+@RequestMapping("/tianmao/entity/spec/template")
 @Slf4j
 public class SpecTemplateController {// 天猫商品规格模板控制类
 

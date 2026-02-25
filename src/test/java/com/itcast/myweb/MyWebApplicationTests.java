@@ -49,6 +49,21 @@ class MyWebApplicationTests {
     }
 
 
+    @Test
+    void testString() {
+        String text="sat.tdg.cvg";
+
+        String[] split = text.split("\\.");
+
+        for (String s : split){
+            System.out.println(s);
+        }
+
+    }
+
+
+
+
 
 
 }

@@ -1,6 +1,7 @@
 package com.itcast.myweb.service.impl;
 
 import com.itcast.myweb.DTO.SpecTemplateDTO;
+import com.itcast.myweb.common.Constant;
 import com.itcast.myweb.mapper.SpecTemplateMapper;
 import com.itcast.myweb.pojo.Result;
 import com.itcast.myweb.service.SpecTemplateService;
@@ -34,7 +35,7 @@ public class SpecTemplateServiceImpl implements SpecTemplateService {
         //设置删除状态
 
         //调用删除
-        specTemplateMapper.softDelSpecTemplate(id);
+        specTemplateMapper.softDelSpecTemplate(id, Constant.LOGICAL_DELETED);
 
     }
 
