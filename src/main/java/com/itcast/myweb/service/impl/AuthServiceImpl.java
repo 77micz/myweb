@@ -38,7 +38,7 @@ public class AuthServiceImpl implements AuthService {
     public String getCode(String contactPhone) {
 
         //判断手机号是否为空
-        if (contactPhone == null || contactPhone.isEmpty()){
+        if (contactPhone == null || contactPhone.isEmpty()) {
             throw new NullPhoneException("手机号不能为空");
         }
 
@@ -46,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
 
         //判断手机号格式是否正确
         boolean mobile = PhoneUtil.isMobile(contactPhone);
-        if (!mobile){
+        if (!mobile) {
             throw new PhoneFormatException("手机号格式有误");
         }
 
@@ -64,7 +64,7 @@ public class AuthServiceImpl implements AuthService {
 
         String loginDTOCode = loginDTO.getCode();//验证码
         //判断验证码是否为空
-        if (loginDTOCode == null || loginDTOCode.isEmpty()){
+        if (loginDTOCode == null || loginDTOCode.isEmpty()) {
             throw new NullCodeException("验证码不能为空");
         }
 
@@ -76,7 +76,7 @@ public class AuthServiceImpl implements AuthService {
         }
         //判断手机号格式是否正确
         boolean mobile = PhoneUtil.isMobile(loginDTOContactPhone);
-        if (!mobile){
+        if (!mobile) {
             throw new PhoneFormatException("手机号格式有误");
         }
 
@@ -121,9 +121,33 @@ public class AuthServiceImpl implements AuthService {
         userMap.put("id", userId);
         userMap.put("nickName", nickName);
         userMap.put("image", image);
+        userMap.put("class", UserDTO.class.getName());
 
         //生成jwt令牌
         return Jwt.createJWT(userMap);
+
+    }
+
+
+    //登出
+    @Override
+    public void logout(String token) {
+
+        //判断令牌是否为空
+        if (token == null || token.isEmpty()) {
+            throw new NullTokenException("当前状态未登录");
+        }
+
+        //解析令牌，获取过期时间
+        Map<String, Object> map = Jwt.parseJWT(token);
+        long expireTime = (long) map.get("exp");
+
+        //得到剩余时间
+        long remainTime = expireTime - System.currentTimeMillis();
+
+        //存入redis黑名单
+        stringRedisTemplate.opsForValue().set(Constant.TOKEN_BLACKLIST_KEY + token, "logout", remainTime, java.util.concurrent.TimeUnit.MILLISECONDS);
+
 
     }
 

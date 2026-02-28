@@ -45,6 +45,10 @@ public class Constant {
     public static final String DEFAULT_AVATAR_URL = "https://tianmao-oss.oss-cn-beijing.aliyuncs.com/avatar/default.png";
 
 
+    //令牌黑名单
+    public static final String TOKEN_BLACKLIST_KEY = "token:blacklist:";
+
+
 
 
 

@@ -12,4 +12,8 @@ public interface AuthService {
 
     //登陆
     String login(LoginDTO loginDTO);
+
+
+    //登出
+    void logout(String token);
 }

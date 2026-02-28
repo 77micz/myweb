@@ -53,6 +53,23 @@ public class AuthController {// 认证控制类
     }
 
 
+    /**
+     * 登出
+     * @param token
+     * @return result
+     */
+    @PostMapping("/logout")
+    public Result logout(@RequestHeader("Authorization") String token){
+
+        log.info("用户登出，token:{}",token);
+
+
+        authService.logout(token);
+
+        return Result.ok("退出登陆成功");
+    }
+
+
 
 
 
