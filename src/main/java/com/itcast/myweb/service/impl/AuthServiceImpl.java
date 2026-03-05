@@ -8,9 +8,8 @@ import com.itcast.myweb.common.Constant;
 import com.itcast.myweb.entity.User;
 import com.itcast.myweb.exception.*;
 import com.itcast.myweb.mapper.UserMapper;
-import com.itcast.myweb.pojo.Result;
 import com.itcast.myweb.service.AuthService;
-import com.itcast.myweb.utils.Code;
+import com.itcast.myweb.utils.CodeUtil;
 import com.itcast.myweb.utils.Jwt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -18,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.itcast.myweb.common.Constant.IS_NOT_DELETED;
 
@@ -33,6 +33,10 @@ public class AuthServiceImpl implements AuthService {
     private StringRedisTemplate stringRedisTemplate;
 
 
+    @Autowired
+    private CodeUtil codeUtil;
+
+
     //获取验证码
     @Override
     public String getCode(String contactPhone) {
@@ -42,7 +46,6 @@ public class AuthServiceImpl implements AuthService {
             throw new NullPhoneException("手机号不能为空");
         }
 
-        String code = Code.createCode();
 
         //判断手机号格式是否正确
         boolean mobile = PhoneUtil.isMobile(contactPhone);
@@ -50,10 +53,9 @@ public class AuthServiceImpl implements AuthService {
             throw new PhoneFormatException("手机号格式有误");
         }
 
-        //缓存验证码
-        stringRedisTemplate.opsForValue().set(Constant.CODE_KEY + contactPhone, code, Constant.CODE_TIME, java.util.concurrent.TimeUnit.MINUTES);
+        //生成验证码
+        return codeUtil.createCode(contactPhone);
 
-        return code;
     }
 
 
@@ -80,16 +82,16 @@ public class AuthServiceImpl implements AuthService {
             throw new PhoneFormatException("手机号格式有误");
         }
 
-        //获取redis验证码
-        String string = stringRedisTemplate.opsForValue().get(Constant.CODE_KEY + loginDTOContactPhone);
-        //判断是否过期
-        if (string == null) {
-            throw new CodeExpiredException("验证码已过期");
+        //校验验证码
+        Integer checkCode = codeUtil.checkCode(loginDTOCode, loginDTOContactPhone);
+        if(Objects.equals(checkCode, Constant.CODE_EMPTY)) {
+            throw new NullCodeException(Constant.MSG_EMPTY);
+        }else if(Objects.equals(checkCode, Constant.CODE_ERROR)) {
+            throw new CodeException(Constant.MSG_ERROR);
+        }else if(Objects.equals(checkCode, Constant.CODE_EXPIRE)) {
+            throw new CodeException(Constant.MSG_EXPIRE);
         }
-        //判断验证码是否相同
-        if (!loginDTOCode.equals(string)) {
-            throw new IncorrectCodeException("验证码错误");
-        }
+
 
 
         //根据手机号查询用户数量

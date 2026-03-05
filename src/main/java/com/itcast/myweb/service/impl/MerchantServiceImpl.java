@@ -9,7 +9,7 @@ import com.itcast.myweb.entity.Merchant;
 import com.itcast.myweb.mapper.MerchantMapper;
 import com.itcast.myweb.pojo.Result;
 import com.itcast.myweb.service.MerchantService;
-import com.itcast.myweb.utils.Code;
+import com.itcast.myweb.utils.CodeUtil;
 import com.itcast.myweb.utils.Jwt;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +31,10 @@ public class MerchantServiceImpl implements MerchantService {// 商户服务实�
     @Autowired
     private StringRedisTemplate redisTemplate;// redis
 
+
+    @Autowired
+    private CodeUtil codeUtil;
+
     // 获取验证码
     @Override
     public Result getCode(String contactPhone) {
@@ -42,7 +46,7 @@ public class MerchantServiceImpl implements MerchantService {// 商户服务实�
         }
 
         //生成验证码
-        String code = Code.createCode();
+        String code = codeUtil.createCode(contactPhone);
 
         log.info("验证码:{}", code);
 

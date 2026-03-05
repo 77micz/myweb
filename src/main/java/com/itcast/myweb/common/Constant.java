@@ -48,9 +48,42 @@ public class Constant {
     //令牌黑名单
     public static final String TOKEN_BLACKLIST_KEY = "token:blacklist:";
 
+    //分类缓存
+    public static final String CATEGORY_CACHE_KEY = "cache:category";
+
+
+    //返回热门商品数量
+    public static final Integer HOT_ITEM_COUNT = 1000;
+    //返回热门商品数量（前端展示）
+    public static final Integer HOT_ITEM_COUNT_FRONT = 300;
+
+    //根据用户偏好返回商品数量
+    public static final Integer PREFERENCE_ITEM_COUNT = 200;
+    //携带的热门商品数量
+    public static final Integer MIXED_HOT_ITEM_COUNT = 200;
 
 
 
+    public static final String HOT_ITEM_CACHE_KEY = "cache:hotItem";// 热门商品缓存key
 
 
+    //热门商品缓存过期时间
+    public static final Integer HOT_ITEM_CACHE_TTL = 10;// 热门商品缓存过期时间10分钟
+
+
+    //验证码状态码
+    public static final Integer CODE_EMPTY = 1;
+    public static final Integer CODE_ERROR = 3;
+    public static final Integer CODE_EXPIRE = 2;
+
+    //验证码状态码描述
+    public static final String MSG_EMPTY = "验证码为空";
+    public static final String MSG_ERROR = "验证码错误";
+    public static final String MSG_EXPIRE = "验证码过期或不存在";
+
+    public static final String CATEGORY_PREFERENCE_CACHE_KEY = "cache:categoryPreference:";// 用户偏好分类缓存key
+
+    public static final long CATEGORY_PREFERENCE_CACHE_TTL = 7;// 用户偏好分类缓存过期时间7天
+
+    public static final long CATEGORY_CACHE_TTL = 7;// 分类缓存过期时间7天
 }
