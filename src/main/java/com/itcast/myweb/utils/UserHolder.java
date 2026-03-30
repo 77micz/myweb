@@ -1,7 +1,7 @@
 package com.itcast.myweb.utils;
 
-import com.itcast.myweb.DTO.UserDTO;
 
+import com.itcast.myweb.domain.dto.UserDTO;
 
 public class UserHolder {// 用户线程局部变量
 

@@ -24,7 +24,7 @@ public class CodeUtil {
 
         String code = RandomUtil.randomNumbers(6);
         // 保存验证码到redis
-        stringRedisTemplate.opsForValue().set(Constant.CODE_KEY + phone,code, Constant.CODE_TIME, TimeUnit.MINUTES);
+        stringRedisTemplate.opsForValue().set(Constant.CODE_CACHE_KEY_PREFIX + phone,code, Constant.CODE_EXPIRE_TIME, TimeUnit.MINUTES);
         return code;
 
     }
@@ -35,25 +35,25 @@ public class CodeUtil {
 
         // 校验验证码是否为空
         if (code == null || code.isEmpty()) {
-            return 1;//验证码为空
+            return Constant.CODE_EMPTY;//验证码为空
         }
         // 从redis中获取验证码
-        String redisCode = stringRedisTemplate.opsForValue().get(Constant.CODE_KEY + phone);
+        String redisCode = stringRedisTemplate.opsForValue().get(Constant.CODE_CACHE_KEY_PREFIX + phone);
 
 
         // 校验redis中的验证码是否为空
         if(redisCode == null){
-            return 2;//验证码过期或不存在
+            return Constant.CODE_EXPIRE;//验证码过期或不存在
         }
 
         // 比较验证码
         if(code.equals(redisCode)){
             // 验证码正确，删除redis中的验证码
-            stringRedisTemplate.delete(Constant.CODE_KEY + phone);
-            return 0;//验证码正确
+            stringRedisTemplate.delete(Constant.CODE_CACHE_KEY_PREFIX + phone);
+            return Constant.CODE_SUCCESS;//验证码正确
         }
 
-        return 3;//验证码错误
+        return Constant.CODE_ERROR;//验证码错误
     }
 
 

@@ -20,7 +20,7 @@ public class Jwt {// JWT工具类
         return Jwts.builder()
                 .setClaims(dataMap)// 设置数据
                 .signWith(SignatureAlgorithm.HS256, Constant.JWT_SECRET)// 设置密钥
-                .setExpiration(new Date(System.currentTimeMillis() + Constant.JWT_Expire_Time))// 设置过期时间2小时
+                .setExpiration(new Date(System.currentTimeMillis() + Constant.JWT_EXPIRE_TIME))// 设置过期时间7天
                 .compact();
 
     }

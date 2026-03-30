@@ -1,49 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+
     <modelVersion>4.0.0</modelVersion>
+
+
+<!--    <parent>-->
+<!--        <groupId>org.springframework.boot</groupId>-->
+<!--        <artifactId>spring-boot-starter-parent</artifactId>-->
+<!--        <version>3.5.10</version>-->
+<!--        <relativePath/> &lt;!&ndash; lookup parent from repository &ndash;&gt;-->
+<!--    </parent>-->
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.10</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>2.7.12</version>
+        <relativePath/>
     </parent>
+
+
+
     <groupId>com.itcast</groupId>
     <artifactId>my-web</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>my-web</name>
     <description>my-web</description>
-    <url/>
-    <licenses>
-        <license/>
-    </licenses>
-    <developers>
-        <developer/>
-    </developers>
-    <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
-    </scm>
+
+
+
+
+
     <properties>
-        <java.version>17</java.version>
+        <java.version>11</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
     </properties>
+
+
+
+
     <dependencies>
+
+
+<!--        redis-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
+
+<!--        redis连接池-->
+        <!-- Redis 连接池必须依赖 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
+<!--        mybatisplus-->
         <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>3.0.5</version>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>3.5.3.1</version>
         </dependency>
 
+<!--        mysql连接驱动-->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
@@ -54,17 +81,31 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+
+
+<!--        测试-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter-test</artifactId>
-            <version>3.0.5</version>
-            <scope>test</scope>
-        </dependency>
+
+
+<!--        &lt;!&ndash;完成SpringMVC自动装配&ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework</groupId>-->
+<!--            <artifactId>spring-webmvc</artifactId>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
+
+
+
+<!--        <dependency>-->
+<!--            <groupId>org.mybatis.spring.boot</groupId>-->
+<!--            <artifactId>mybatis-spring-boot-starter-test</artifactId>-->
+<!--            <version>3.0.5</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
 
 
 <!--        jwt-->
@@ -93,6 +134,11 @@
             <artifactId>javax.activation-api</artifactId>
             <version>1.2.0</version>
         </dependency>
+
+
+<!--        -->
+
+
 
 
 <!--        hutool-->
@@ -128,22 +174,20 @@
             <version>2.3.3</version>
         </dependency>
 
+<!--        -->
 
-<!--        pagehelper-->
+
+
+<!--        knife-->
         <dependency>
-            <groupId>com.github.pagehelper</groupId>
-            <artifactId>pagehelper-spring-boot-starter</artifactId>
-            <version>1.4.7</version>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
+            <version>4.1.0</version>
         </dependency>
 
 
 
-<!--        caffeine-->
-        <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
-            <version>3.1.6</version>
-        </dependency>
+
 
 
 
@@ -151,6 +195,9 @@
 
     <build>
         <plugins>
+
+
+            <!-- Lombok 注解编译插件 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -163,6 +210,9 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
+
+
+            <!-- Spring Boot 打包插件 -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

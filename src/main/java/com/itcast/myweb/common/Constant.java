@@ -5,15 +5,21 @@ public class Constant {
 
     public static final String JWT_SECRET = "aXRjYXN0";// jwt密钥
 
-    public static final long JWT_Expire_Time = 1000 * 60 * 60 * 2;// jwt过期时间2小时
+    public static final Long JWT_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7L;// jwt过期时间7天
 
-    public static final String CODE_KEY ="login:code:";// 验证码key
+    public static final String CODE_CACHE_KEY_PREFIX ="auth:code:";// 验证码缓存key前缀
 
-    public static final Long CODE_TIME = 5L;// 验证码过期时间5分钟
+    public static final Long CODE_EXPIRE_TIME = 5L;// 验证码过期时间5分钟
 
     public static final Integer LOGICAL_DELETED = 1;// 逻辑删除
 
     public static final Integer IS_NOT_DELETED = 0;// 非逻辑删除
+
+
+    public static final Integer ACCOUNT_LOG_OFF = 0;//注销
+    public static final Integer ACCOUNT_NORMAL = 1;//正常
+    public static final Integer ACCOUNT_FREEZE = 0;//冻结
+
 
 
     public static final String PC_BASE_CACHE_KEY = "cache:commodity:base:pc:";// PC基础商品缓存key
@@ -42,11 +48,16 @@ public class Constant {
     public static final Integer UNIQUE_ID_BIT_LENGTH = 32;
 
     //默认头像地址
-    public static final String DEFAULT_AVATAR_URL = "https://tianmao-oss.oss-cn-beijing.aliyuncs.com/avatar/default.png";
+    public static final String DEFAULT_AVATAR_URL = "https://myweb-oss.oss-cn-beijing.aliyuncs.com/avatar/default.png";
 
 
-    //令牌黑名单
-    public static final String TOKEN_BLACKLIST_KEY = "token:blacklist:";
+    //令牌黑名单key
+    public static final String TOKEN_BLACKLIST_KEY = "auth:blacklist:ids";
+
+    //失效令牌key前缀
+    public static final String TOKEN_INVALID_KEY_PREFIX = "auth:logout:user:";
+
+
 
     //分类缓存
     public static final String CATEGORY_CACHE_KEY = "cache:category";
@@ -72,9 +83,10 @@ public class Constant {
 
 
     //验证码状态码
-    public static final Integer CODE_EMPTY = 1;
-    public static final Integer CODE_ERROR = 3;
-    public static final Integer CODE_EXPIRE = 2;
+    public static final Integer CODE_EMPTY = 1;// 验证码为空
+    public static final Integer CODE_ERROR = 3;// 验证码错误
+    public static final Integer CODE_EXPIRE = 2;// 验证码过期或不存在
+    public static final Integer CODE_SUCCESS = 0;// 验证码成功
 
     //验证码状态码描述
     public static final String MSG_EMPTY = "验证码为空";
@@ -86,4 +98,16 @@ public class Constant {
     public static final long CATEGORY_PREFERENCE_CACHE_TTL = 7;// 用户偏好分类缓存过期时间7天
 
     public static final long CATEGORY_CACHE_TTL = 7;// 分类缓存过期时间7天
+
+    //用户昵称前缀
+    public static final String NICK_NAME_PREFIX = "nick_";
+
+    //用户账号前缀
+    public static final String ACCOUNT_NAME_PREFIX = "user_";
+
+
+
+
+
+
 }

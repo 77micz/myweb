@@ -1,8 +1,8 @@
 package com.itcast.myweb.handler;
 
 
-import com.itcast.myweb.exception.*;
-import com.itcast.myweb.pojo.Result;
+import com.itcast.myweb.common.exception.*;
+import com.itcast.myweb.common.pojo.Result;
 import io.jsonwebtoken.*;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 

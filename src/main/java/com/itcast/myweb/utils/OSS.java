@@ -11,12 +11,8 @@ import com.aliyun.oss.common.auth.EnvironmentVariableCredentialsProvider;
 import com.aliyun.oss.common.comm.SignVersion;
 import com.aliyun.oss.model.PutObjectRequest;
 import com.aliyun.oss.model.PutObjectResult;
-import org.apache.commons.lang3.time.DateUtils;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.nio.file.Files;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class OSS {// 阿里云OSS

@@ -2,17 +2,15 @@ package com.itcast.myweb.task;
 
 
 import cn.hutool.json.JSONUtil;
-import com.itcast.myweb.DTO.ItemDTO;
 import com.itcast.myweb.common.Constant;
-import com.itcast.myweb.mapper.ItemMapper;
-import com.itcast.myweb.service.ItemService;
+import com.itcast.myweb.domain.dto.ItemDTO;
+import com.itcast.myweb.service.common.IItemBaseService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.DefaultTypedTuple;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -21,15 +19,18 @@ import java.util.stream.Collectors;
 // 重置热门商品任务
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class ResetHotItem {
 
 
-    @Autowired
-    private ItemService itemService;
+//    private ItemService itemService;
+
+    // 商品服务
+    private final IItemBaseService itemService;
 
 
-    @Autowired
-    private StringRedisTemplate redisTemplate;
+
+    private final StringRedisTemplate redisTemplate;
 
     /**
      * 重置热门商品

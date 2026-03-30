@@ -1,6 +1,7 @@
 package com.itcast.myweb.utils;
 
-import com.itcast.myweb.DTO.MerchantDTO;
+
+import com.itcast.myweb.domain.dto.MerchantDTO;
 
 public class MerchantHolder {// 封装threadlocal记录商户信息
 

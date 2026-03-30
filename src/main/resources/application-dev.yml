@@ -1,0 +1,17 @@
+
+
+
+
+# 数据库相关
+db:
+  host: 192.168.200.152
+  database: myweb
+  username: root
+  password: 123
+
+
+# redis 相关
+redis:
+    host: 192.168.200.133
+    port: 6379
+
