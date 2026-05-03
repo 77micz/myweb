@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class ItemDTO {
 
-    private Long id;
+    private Long id;// 商品id
 
     private Long categoryId;// 商品分类id
 

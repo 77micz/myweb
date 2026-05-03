@@ -60,6 +60,24 @@ public class ExceptionHandler {// 异常处理
     }
 
 
+    //处理商品相关异常
+    @org.springframework.web.bind.annotation.ExceptionHandler(ItemException.class)
+    public Result error(ItemException e) {
+        if (e instanceof ItemDoesntExistException) {
+            return Result.error(0, "商品不存在");
+        } else {
+            return Result.error(0, "商品相关异常："+e.getMessage());
+        }
+    }
+
+
+
+
+
+
+
+
+
     // 处理所有异常
     @org.springframework.web.bind.annotation.ExceptionHandler(Exception.class)
     public Result error(Exception e) {

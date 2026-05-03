@@ -40,7 +40,12 @@ knife4j:
         api-rule-resources: com.itcast.myweb.controller
 
 
-
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: deleted  # 全局软删除字段名
+      logic-delete-value: 1       # 已删除值
+      logic-not-delete-value: 0   # 未删除值
 
 mybatis:
   configuration:

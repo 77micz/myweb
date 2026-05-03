@@ -9,6 +9,7 @@ import com.itcast.myweb.utils.MerchantHolder;
 import com.itcast.myweb.utils.UserHolder;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
@@ -22,10 +23,11 @@ import java.util.Map;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class Interceptor implements HandlerInterceptor {//拦截器
 
 
-    private StringRedisTemplate stringRedisTemplate;
+    private final StringRedisTemplate stringRedisTemplate;
 
 
     //preHandle方法返回true表示继续流程（如调用下一个拦截器或处理器）；返回false表示流程中断（如登录检查失败），不会继续调用其他的拦截器或处理器，此时我们需要通过response来产生响应；
@@ -53,7 +55,6 @@ public class Interceptor implements HandlerInterceptor {//拦截器
             //移除iat和exp
             map.remove("iat");
             map.remove("exp");
-            map.remove("class");
             //获取用户id
             String userId = map.get("id").toString();
 
