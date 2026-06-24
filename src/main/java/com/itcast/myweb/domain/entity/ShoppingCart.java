@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.time.LocalDateTime;
 import java.io.Serializable;
 
@@ -51,6 +52,9 @@ public class ShoppingCart implements Serializable {
     @ApiModelProperty(value = "单价")
     private BigDecimal price;
 
+    @ApiModelProperty(value = "优惠价")
+    private BigDecimal specialPrice;
+
     @ApiModelProperty(value = "主图")
     private String image;
 
@@ -59,6 +63,9 @@ public class ShoppingCart implements Serializable {
 
     @ApiModelProperty(value = "标题")
     private String title;
+
+    @ApiModelProperty(value = "店铺id")
+    private Long merchantId;
 
     @ApiModelProperty(value = "店铺名称")
     private String merchantName;

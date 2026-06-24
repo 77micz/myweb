@@ -14,13 +14,15 @@ public class CartVO {
 
     private Long id;// 购物车id
 
-    private Long skuId;// 商品sku id
+    private Long skuId;// sku id
 
-    private Long baseId;// 商品基础id
+    private Long baseId;// spu id
 
     private Integer num;// 商品数量
 
     private BigDecimal price;// 商品价格
+
+    private BigDecimal specialPrice;// 优惠价
 
     private String title;// 商品标题
 
@@ -38,8 +40,6 @@ public class CartVO {
     private ItemStatus status;// 购物车状态
 
     private Integer stock;// 商品库存
-
-
 
 
 }

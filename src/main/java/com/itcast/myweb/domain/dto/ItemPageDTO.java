@@ -1,8 +1,13 @@
 package com.itcast.myweb.domain.dto;
 
+import com.itcast.myweb.common.Constant;
+import com.itcast.myweb.common.pojo.OrderClazz;
 import com.itcast.myweb.common.pojo.PageSearch;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -11,6 +16,15 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class ItemPageDTO extends PageSearch {
+
+
+    static {
+        orderClazzList = new ArrayList<>();
+        orderClazzList.add(new OrderClazz("recent_sales", false, 1));
+        orderClazzList.add(new OrderClazz("sales", false, 2));
+        orderClazzList.add(new OrderClazz("id", true, 3));
+    }
+
 
     /**
      * 分类id
@@ -22,39 +36,24 @@ public class ItemPageDTO extends PageSearch {
      */
     private String name;
 
-
-    /**
-     * 排序字段
-     */
-    private String sort = "recentSale";
-
-    /**
-     * 排序方向
-     */
-    private String order = "desc";
-
-
     /**
      * 是否上架
      */
-    private Boolean isOnSale = Boolean.TRUE;
+    private Boolean onSale = Boolean.TRUE;
 
 
-    /**
-     * 兜底排序
-     */
-    private String lastSort = "id";
+    public ItemPageDTO() {
+        super.setPageSize(Constant.DEFAULT_ITEM_PAGE_SIZE);
+    }
 
-    /**
-     * 兜底排序方向
-     */
-    private String lastOrder = "asc";
-
+    public ItemPageDTO(Long pageNo, Long pageSize) {
+        super.setPageNo(pageNo);
+        super.setPageSize(pageSize);
+    }
 
 
-
-
-
-
-
+    @Override
+    public List<OrderClazz> getOrderClazzList() {
+        return orderClazzList;
+    }
 }

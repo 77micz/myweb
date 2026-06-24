@@ -1,43 +1,28 @@
-package com.itcast.myweb.domain.entity;
+package com.itcast.myweb.domain.vo;
 
-import java.math.BigDecimal;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-
-import java.time.LocalDateTime;
-import java.io.Serializable;
-
-import io.swagger.annotations.ApiModel;
+import com.itcast.myweb.enums.OrderStatus;
+import com.itcast.myweb.enums.PaymentType;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
- * <p>
- * 订单明细表
- * </p>
- *
- * @author nick
- * @since 2026-03-28
+ * 订单视图
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
-@TableName("order_detail")
-@ApiModel(value = "订单明细表")
-public class OrderDetail implements Serializable {
+public class OrderVO {
 
-    private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "主键")
-    @TableId(value = "id", type = IdType.AUTO)
+    @ApiModelProperty(value = "明细id")
     private Long id;
 
-    @ApiModelProperty(value = "用户id")
-    private Long userId;
+    @ApiModelProperty(value = "订单状态，（0=待付款，1=待发货，2=待收货，3=已完成，4=已取消，5=退款/售后）")
+    private OrderStatus status;
 
     @ApiModelProperty(value = "订单id")
     private Long orderId;
@@ -69,20 +54,11 @@ public class OrderDetail implements Serializable {
     @ApiModelProperty(value = "运费")
     private BigDecimal shippingFee;
 
-    @ApiModelProperty(value = "优惠")
-    private BigDecimal preferential;
-
     @ApiModelProperty(value = "实付款")
     private BigDecimal actualPayment;
 
-    @ApiModelProperty(value = "是否已删除，0-未删除，1-已删除")
-    private Boolean deleted;
-
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createTime;
-
-    @ApiModelProperty(value = "更新时间")
-    private LocalDateTime updateTime;
 
 
 }

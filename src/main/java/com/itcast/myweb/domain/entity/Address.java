@@ -3,6 +3,7 @@ package com.itcast.myweb.domain.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.time.LocalDateTime;
 import java.io.Serializable;
 
@@ -59,6 +60,12 @@ public class Address implements Serializable {
 
     @ApiModelProperty(value = "区县名称")
     private String districtName;
+
+    @ApiModelProperty(value = "街道编码")
+    private String streetCode;
+
+    @ApiModelProperty(value = "街道名称")
+    private String streetName;
 
     @ApiModelProperty(value = "详细地址")
     private String detailAddress;

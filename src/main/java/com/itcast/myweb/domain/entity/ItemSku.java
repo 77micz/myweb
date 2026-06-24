@@ -9,6 +9,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import java.io.Serializable;
 
+import com.itcast.myweb.common.Constant;
+import com.itcast.myweb.common.pojo.KeyFunc;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -28,7 +30,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @TableName("item_sku")
 @ApiModel(value = "商品表sku")
-public class ItemSku implements Serializable {
+public class ItemSku implements Serializable, KeyFunc {
 
     private static final long serialVersionUID = 1L;
 
@@ -66,11 +68,14 @@ public class ItemSku implements Serializable {
     @ApiModelProperty(value = "价格")
     private BigDecimal price;
 
+    @ApiModelProperty(value = "优惠价")
+    private BigDecimal specialPrice;
+
     @ApiModelProperty(value = "库存")
     private Integer stock;
 
     @ApiModelProperty(value = "是否上架,(0=否，1=是)")
-    private Boolean isOnSale;
+    private Boolean onSale;
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createTime;
@@ -79,4 +84,8 @@ public class ItemSku implements Serializable {
     private LocalDateTime updateTime;
 
 
+    @Override
+    public String generateKey() {
+        return Constant.ITEM_SKU_CACHE_KEY_PREFIX + id;
+    }
 }

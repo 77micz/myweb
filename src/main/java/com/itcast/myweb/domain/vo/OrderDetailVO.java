@@ -1,43 +1,26 @@
-package com.itcast.myweb.domain.entity;
+package com.itcast.myweb.domain.vo;
 
-import java.math.BigDecimal;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
-
-import java.time.LocalDateTime;
-
 import com.baomidou.mybatisplus.annotation.TableId;
-
-import java.io.Serializable;
-
 import com.itcast.myweb.enums.OrderStatus;
 import com.itcast.myweb.enums.PaymentType;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
- * <p>
- * 订单表
- * </p>
- *
- * @author nick
- * @since 2026-03-28
+ * 订单详情视图
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
-@TableName("tb_order")
-@ApiModel(value = "订单表")
-public class Order implements Serializable {
+public class OrderDetailVO {
 
-    private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "订单号，主键")
-    @TableId(value = "id", type = IdType.ASSIGN_ID)//全局唯一id
+    //-----------------------order
+
+    @ApiModelProperty(value = "订单id")
     private Long id;
 
     @ApiModelProperty(value = "用户id")
@@ -70,14 +53,44 @@ public class Order implements Serializable {
     @ApiModelProperty(value = "取消时间")
     private LocalDateTime cancelTime;
 
-    @ApiModelProperty(value = "是否已删除，0-未删除，1-已删除")
-    private Boolean deleted;
 
-    @ApiModelProperty(value = "创建/下单时间")
-    private LocalDateTime createTime;
+    //-----------------------------------------orderDetail
 
-    @ApiModelProperty(value = "更新时间")
-    private LocalDateTime updateTime;
+    @ApiModelProperty(value = "订单明细id")
+    private Long orderDetailId;
+
+    @ApiModelProperty(value = "商品id")
+    private Long skuId;
+
+    @ApiModelProperty(value = "标题")
+    private String title;
+
+    @ApiModelProperty(value = "主图")
+    private String image;
+
+    @ApiModelProperty(value = "规格值组合，格式：属性键值:属性值值，用,分隔")
+    private String specsVal;
+
+    @ApiModelProperty(value = "商家id")
+    private Long merchantId;
+
+    @ApiModelProperty(value = "商家名称")
+    private String merchantName;
+
+    @ApiModelProperty(value = "数量")
+    private Integer num;
+
+    @ApiModelProperty(value = "总价")
+    private BigDecimal totalPrice;
+
+    @ApiModelProperty(value = "运费")
+    private BigDecimal shippingFee;
+
+    @ApiModelProperty(value = "优惠")
+    private BigDecimal preferential;
+
+    @ApiModelProperty(value = "实付款")
+    private BigDecimal actualPayment;
 
 
 }

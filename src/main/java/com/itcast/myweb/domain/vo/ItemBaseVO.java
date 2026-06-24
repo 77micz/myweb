@@ -1,7 +1,11 @@
 package com.itcast.myweb.domain.vo;
 
 
+import com.itcast.myweb.common.Constant;
+import com.itcast.myweb.common.pojo.KeyFunc;
 import lombok.Data;
+
+import java.math.BigDecimal;
 
 @Data
 public class ItemBaseVO {
@@ -19,7 +23,10 @@ public class ItemBaseVO {
     private String title;
 
     // 商品价格
-    private Double price;
+    private BigDecimal price;
+
+    // 商品折扣
+    private BigDecimal discount;
 
     // 销售量
     private Integer sales;

@@ -2,13 +2,16 @@ package com.itcast.myweb.service.impl.client;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.itcast.myweb.common.Constant;
 import com.itcast.myweb.common.exception.*;
 import com.itcast.myweb.common.pojo.PageResult;
-import com.itcast.myweb.common.pojo.PageSearch;
 import com.itcast.myweb.domain.dto.CartDTO;
+import com.itcast.myweb.domain.dto.CartPageDTO;
 import com.itcast.myweb.domain.dto.UserDTO;
+import com.itcast.myweb.domain.entity.Address;
 import com.itcast.myweb.domain.entity.ItemBase;
 import com.itcast.myweb.domain.entity.ItemSku;
 import com.itcast.myweb.domain.entity.ShoppingCart;
@@ -18,15 +21,17 @@ import com.itcast.myweb.domain.vo.ItemDetailVO;
 import com.itcast.myweb.domain.vo.ItemSkuVO;
 import com.itcast.myweb.enums.ItemStatus;
 import com.itcast.myweb.service.client.CartService;
-import com.itcast.myweb.service.common.IItemBaseService;
-import com.itcast.myweb.service.common.IItemSkuService;
-import com.itcast.myweb.service.common.IShoppingCartService;
+import com.itcast.myweb.service.client.ItemService;
+import com.itcast.myweb.service.common.*;
+import com.itcast.myweb.utils.OrderItemUtils;
 import com.itcast.myweb.utils.TTLOffset;
 import com.itcast.myweb.utils.UserHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,6 +54,10 @@ public class CartServiceImpl implements CartService {
     private final IItemSkuService itemSkuService;
     // spu服务
     private final IItemBaseService itemBaseService;
+    // 地址服务
+    private final IAddressService addressService;
+    // item服务
+    private final ItemServiceImpl itemService;
 
 
     /**
@@ -59,60 +68,44 @@ public class CartServiceImpl implements CartService {
 
         //准备数据
         Long skuId = cartDTO.getSkuId();
-        Long baseId = cartDTO.getBaseId();
         Integer num = cartDTO.getNum();
         UserDTO userDTO = UserHolder.get();
         Long userId = userDTO.getId();
+
 
         //构建购物车数据
         ShoppingCart shoppingCart = new ShoppingCart();
 
         //1.查询缓存中是否存在
-        Set<String> members = redisTemplate.opsForSet().members(Constant.ITEM_SKU_CACHE_KEY_PREFIX + baseId);
+        String jsonObj = redisTemplate.opsForValue().get(Constant.ITEM_SKU_CACHE_KEY_PREFIX + skuId);
 
+
+        ItemSku itemSku = new ItemSku();
         //判断是否为空
         //2.存在，构建购物车数据
-        if (members != null && !members.isEmpty()) {
-            //转为ItemSkuVO
-            List<ItemSkuVO> itemSkuVOList = members.stream()
-                    .map(json -> JSONUtil.toBean(json, ItemSkuVO.class))
-                    .collect(Collectors.toList());
-            //查询是否有匹配的sku
-            List<ItemSkuVO> itemSkuVOS = itemSkuVOList.stream().filter(itemSkuVO -> itemSkuVO.getId().equals(skuId)).collect(Collectors.toList());
-            if (!itemSkuVOS.isEmpty()) {
-                ItemSkuVO itemSkuVO = itemSkuVOS.get(0);
-                //拷贝到购物车
-                BeanUtil.copyProperties(itemSkuVO, shoppingCart);
-                //设置数量
-                shoppingCart.setNum(num);
-                //设置用户id
-                shoppingCart.setUserId(userId);
-                //设置skuId
-                shoppingCart.setSkuId(skuId);
-                //取消id
-                shoppingCart.setId(null);
+        if (jsonObj != null) {
+            //转为ItemSku
+            itemSku = JSONUtil.toBean(JSONUtil.toJsonStr(jsonObj), ItemSku.class);
+        } else {
+            //3.不存在，查询数据库
+            itemSku = itemSkuService.lambdaQuery()
+                    .eq(ItemSku::getId, skuId)
+                    .one();
+            //判断是否为空
+            if (itemSku == null) {
+                throw new ItemDoesntExistException("商品不存在");
             }
         }
 
-        //3.不存在，查询数据库
-        ItemSku itemSku = itemSkuService.lambdaQuery()
-                .eq(ItemSku::getId, skuId)
-                .one();
-        ItemSkuVO itemSkuVO = new ItemSkuVO();
-        //判断是否为空
-        if (itemSku == null) {
-            //商品不存在
-            throw new ItemDoesntExistException("商品不存在");
-        }
 
         //4.构建购物车数据
-        //拷贝到ItemSkuVO
-        BeanUtil.copyProperties(itemSku, itemSkuVO);
-        BeanUtil.copyProperties(itemSkuVO, shoppingCart);
+        BeanUtil.copyProperties(itemSku, shoppingCart);
         shoppingCart.setUserId(userId);
         shoppingCart.setNum(num);
         shoppingCart.setSkuId(skuId);
         shoppingCart.setId(null);
+        shoppingCart.setCreateTime(null);
+        shoppingCart.setUpdateTime(null);
 
         //5.写入数据库
         shoppingCartService.saveOrUpdate(shoppingCart);
@@ -125,28 +118,24 @@ public class CartServiceImpl implements CartService {
      * 分页查询购物车
      */
     @Override
-    public PageResult<CartVO> pageList(PageSearch pageSearch) {
+    public PageResult<CartVO> pageList(CartPageDTO cartPageDTO) {
 
         //0.准备数据
-        Long pageNo = pageSearch.getPageNo();
-        Long pageSize = pageSearch.getPageSize();
+        Long pageNo = cartPageDTO.getPageNo();
+        Long pageSize = cartPageDTO.getPageSize();
+        List<OrderItem> orderItems = OrderItemUtils.buildOrderItem(cartPageDTO.getOrderClazzList());
 
-        //1.获取当前用户的id
+        //获取当前用户的id
         UserDTO userDTO = UserHolder.get();
         Long userId = userDTO.getId();
 
         //2.分页查询
-        //判断每页数量是否为null
-        if (pageSize == null) {
-            //设置为默认值
-            pageSize = Constant.CART_PAGE_SIZE;
-        }
 
-        //分页条件
+        //构建分页条件
         Page<ShoppingCart> page = new Page<>(pageNo, pageSize);
+        page.addOrder(orderItems);
         shoppingCartService.lambdaQuery()
                 .eq(ShoppingCart::getUserId, userId)
-                .orderByDesc(ShoppingCart::getCreateTime)
                 .page(page);
 
 
@@ -176,16 +165,13 @@ public class CartServiceImpl implements CartService {
         //补充CartVO数据
         for (CartVO cartVO : cartVOList) {
             ItemSku itemSku = itemSkuMap.get(cartVO.getSkuId());
-            //判断是否为空
-            if (itemSku == null) {
-                continue;
-            }
-            cartVO.setNewPrice(itemSku.getPrice());
+            cartVO.setNewPrice(itemSku.getSpecialPrice());
             cartVO.setStock(itemSku.getStock());
+            cartVO.setStatus(ItemStatus.ITEM_NORMAL);
             //判断商品状态
             // TODO 根据店铺id查询店铺状态
             //判断商品是否下架
-            if (!itemSku.getIsOnSale()) {
+            if (!itemSku.getOnSale()) {
                 cartVO.setStatus(ItemStatus.ITEM_OFF_SHELF);
             }
             //判断商品是否缺货
@@ -193,7 +179,6 @@ public class CartServiceImpl implements CartService {
                 cartVO.setStatus(ItemStatus.STYLE_OUT_OF_STOCK);
             }
         }
-
 
         //5.组装返回数据
         return PageResult.<CartVO>builder()
@@ -215,20 +200,12 @@ public class CartServiceImpl implements CartService {
         Long uid = UserHolder.get().getId();
         Integer num = cartDTO.getNum();
 
-        //1.根据id查询购物车
-        ShoppingCart shoppingCart = shoppingCartService.getById(id);
-
-        //判断购物车是否存在
-        if (shoppingCart == null) {
-            throw new CartDoesntExistException("购物车不存在");
-        }
-        //判断用户id是否一致
-        if (!shoppingCart.getUserId().equals(uid)) {
-            throw new UserIdDoesntMatchException("用户id不一致");
-        }
         //判断数量是否超过最大值
         if (num > Constant.CART_MAX_NUM) {
             throw new CartNumExceedMaxException("数量超过最大值");
+        }
+        if (num <= 0) {
+            throw new CartException("数量最少为1");
         }
 
 
@@ -238,39 +215,6 @@ public class CartServiceImpl implements CartService {
                 .eq(ShoppingCart::getUserId, uid)
                 .set(ShoppingCart::getNum, num)
                 .update();
-
-
-        //3.返回
-
-
-    }
-
-
-    /**
-     * 删除购物车
-     */
-    @Override
-    public void deleteCart(Long id) {
-
-        //0.准备数据
-        Long uid = UserHolder.get().getId();
-
-
-        //1.根据id查询购物车
-        ShoppingCart shoppingCart = shoppingCartService.getById(id);
-
-        //判断购物车是否存在
-        if (shoppingCart == null) {
-            throw new CartDoesntExistException("购物车不存在");
-        }
-        //判断用户id是否一致
-        if (!shoppingCart.getUserId().equals(uid)) {
-            throw new UserIdDoesntMatchException("用户id不一致");
-        }
-
-
-        //2.删除购物车
-        shoppingCartService.removeById(id);
 
 
         //3.返回
@@ -291,86 +235,128 @@ public class CartServiceImpl implements CartService {
         //查询购物车
         ShoppingCart cart = shoppingCartService.lambdaQuery()
                 .eq(ShoppingCart::getId, id)
+                .eq(ShoppingCart::getUserId, uid)
                 .one();
 
         //判断购物车是否存在
         if (cart == null) {
             throw new CartDoesntExistException("购物车不存在");
         }
-        //判断用户id是否一致
-        if (!cart.getUserId().equals(uid)) {
-            throw new UserIdDoesntMatchException("用户id不一致");
-        }
 
-        Long skuId = cart.getSkuId();
         Long baseId = cart.getBaseId();
 
 
+        ItemBase itemBase = new ItemBase();
         ItemDetailVO itemDetailVO = new ItemDetailVO();
         //1.根据base_id查询商品基础信息
         //查询缓存
-        ItemBaseVO itemBaseVO = null;
-        String itemBaseVOJson = redisTemplate.opsForValue().get(Constant.ITEM_BASE_CACHE_KEY_PREFIX + baseId);
+        ItemBaseVO itemBaseVO = new ItemBaseVO();
+        String itemBaseJson = redisTemplate.opsForValue().get(Constant.ITEM_SPU_CACHE_KEY_PREFIX + baseId);
         //判断缓存是否为空
-        if (itemBaseVOJson == null) {
+        if (itemBaseJson == null) {
             //查询数据库
-            ItemBase itemBase = itemBaseService.getById(baseId);
+            itemBase = itemBaseService.getById(baseId);
             //判断商品基础信息是否存在
             if (itemBase == null) {
                 throw new ItemDoesntExistException("商品不存在");
             }
-            //转为ItemBaseVO
-            itemBaseVO = BeanUtil.toBean(itemBase, ItemBaseVO.class);
             //缓存商品基础信息
-            redisTemplate.opsForValue().set(Constant.ITEM_BASE_CACHE_KEY_PREFIX + baseId, JSONUtil.toJsonStr(itemBaseVO), TTLOffset.getRandomTTL(Constant.ITEM_BASE_CACHE_TTL), TimeUnit.MINUTES);
+            redisTemplate.opsForValue().set(Constant.ITEM_SPU_CACHE_KEY_PREFIX + baseId, JSONUtil.toJsonStr(itemBase), TTLOffset.getRandomTTL(Constant.ITEM_SPU_CACHE_TTL), TimeUnit.MINUTES);
         } else {
             //转为ItemBaseVO
-            itemBaseVO = JSONUtil.toBean(itemBaseVOJson, ItemBaseVO.class);
+            itemBase = JSONUtil.toBean(itemBaseJson, ItemBase.class);
         }
+        BeanUtil.copyProperties(itemBase, itemBaseVO);
 
 
-        //2.根据sku_id查询商品sku信息
+        //2.根据spu_id查询商品sku信息
         //查询缓存
-        List<ItemSkuVO> itemSkuVOList = null;
-        Set<String> members = redisTemplate.opsForSet().members(Constant.ITEM_SKU_CACHE_KEY_PREFIX + baseId);
+        List<ItemSku> itemSkuList = new ArrayList<>();
+        List<String> skuIdJsonList = redisTemplate.opsForList().range(Constant.SPU_SKUS_CACHE_KEY_PREFIX + baseId, 0, -1);
         //判断缓存是否为空
-        if (members == null || members.isEmpty()) {
+        if (skuIdJsonList == null || skuIdJsonList.isEmpty()) {
             //查询数据库
-            List<ItemSku> list = itemSkuService.lambdaQuery()
+            itemSkuList = itemSkuService.lambdaQuery()
                     .eq(ItemSku::getBaseId, baseId)
-                    .eq(ItemSku::getIsOnSale, Boolean.TRUE)
+                    .eq(ItemSku::getOnSale, Boolean.TRUE)
                     .list();
             //判断商品sku列表是否为空
-            if (list == null || list.isEmpty()) {
-                throw new ItemSkuDoesntExistException("该规格不存在");
+            if (itemSkuList == null || itemSkuList.isEmpty()) {
+                throw new ItemSkuDoesntExistException("该sku不存在");
             }
-            //转为ItemSkuVO
-            itemSkuVOList = list.stream()
-                    .map(itemSku -> {
-                        return BeanUtil.toBean(itemSku, ItemSkuVO.class);
-                    })
-                    .collect(Collectors.toList());
-            //缓存商品sku列表
-            redisTemplate.opsForSet().add(Constant.ITEM_SKU_CACHE_KEY_PREFIX + baseId,
-                    itemSkuVOList.stream()
-                            .map(JSONUtil::toJsonStr)
-                            .toArray(String[]::new));
-            //设置过期时间
-            redisTemplate.expire(Constant.ITEM_SKU_CACHE_KEY_PREFIX + baseId, TTLOffset.getRandomTTL(Constant.ITEM_SKU_CACHE_TTL), TimeUnit.MINUTES);
+            //缓存商品sku_ids
+            itemService.setIdsToListCache(Constant.SPU_SKUS_CACHE_KEY_PREFIX + baseId, itemSkuList, ItemSku::getId, TTLOffset.getRandomTTL(Constant.SPU_SKUS_CACHE_TTL), TimeUnit.MINUTES);
+
+            //批量缓存sku
+            itemService.multiSetStringCache(itemSkuList, Constant.ITEM_SKU_CACHE_TTL, TimeUnit.MINUTES);
         } else {
-            //转为ItemSkuVO
-            itemSkuVOList = members.stream()
-                    .map(json -> JSONUtil.toBean(json, ItemSkuVO.class))
+            List<Long> ids = skuIdJsonList.stream()
+                    .map(Long::parseLong)
                     .collect(Collectors.toList());
+            //保存不存在的sku_id
+            List<Long> notExistIds = new ArrayList<>();
+            //从缓存获取sku
+            for (Long Id : ids) {
+                String jsonObj = redisTemplate.opsForValue().get(Constant.ITEM_SKU_CACHE_KEY_PREFIX + Id);
+                if (jsonObj == null) {
+                    notExistIds.add(Id);
+                } else {
+                    itemSkuList.add(JSONUtil.toBean(jsonObj, ItemSku.class));
+                }
+            }
+            List<ItemSku> list = null;
+            if (!notExistIds.isEmpty()) {
+                //查询缺失的sku
+                list = itemSkuService.lambdaQuery()
+                        .eq(ItemSku::getBaseId, baseId)
+                        .eq(ItemSku::getOnSale, Boolean.TRUE)
+                        .in(ItemSku::getId, notExistIds)
+                        .list();
+                //判断缺失的sku列表是否为空
+                if (list == null || list.isEmpty()) {
+                    throw new ItemSkuDoesntExistException("该sku不存在");
+                }
+                //缓存缺失sku
+                itemService.multiSetStringCache(list, Constant.ITEM_SKU_CACHE_TTL, TimeUnit.MINUTES);
+            }
+            //合并sku列表
+            if (list != null) {
+                itemSkuList.addAll(list);
+            }
         }
 
 
         //3.拼接返回
         BeanUtil.copyProperties(itemBaseVO, itemDetailVO);
-        itemDetailVO.setSkuVOList(itemSkuVOList);
+        itemDetailVO.setSkuVOList(BeanUtil.copyToList(itemSkuList, ItemSkuVO.class));
 
         return itemDetailVO;
 
 
+    }
+
+
+    /**
+     * 批量删除购物车
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void batchRemove(List<Long> ids) {
+
+        if (ids == null || ids.isEmpty()) {
+            return;
+        }
+
+        //0.准备数据
+        Long uid = UserHolder.get().getId();
+
+
+        //1.删除购物车
+        QueryWrapper<ShoppingCart> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(ShoppingCart::getUserId, uid).in(ShoppingCart::getId, ids);
+        shoppingCartService.remove(queryWrapper);
+
+
+        //2.返回
     }
 }

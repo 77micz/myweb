@@ -15,9 +15,7 @@ public class UserDTO {
 
     private String image;//头像
 
-
-
-
+    private Long addressId;// 默认地址id
 
 
 }

@@ -3,6 +3,8 @@ package com.itcast.myweb.mapper;
 import com.itcast.myweb.domain.entity.Order;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import java.util.List;
 
 /**
  * <p>
@@ -14,5 +16,12 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface OrderMapper extends BaseMapper<Order> {
+
+
+    /**
+     * 查询已删除的订单
+     */
+    List<Order> selectDeletedOrders(@Param("userId") Long userId, @Param("orderId") Long orderId, @Param("detailIds") List<Long> detailIds);
+
 
 }

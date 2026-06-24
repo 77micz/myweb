@@ -58,24 +58,24 @@ public class ResetHotItem {
 
 
             //临时key
-            String tempKey = Constant.HOT_ITEM_CACHE_KEY + ":temp";
+            String tempKey = Constant.HOT_ITEM_CACHE_KEY_PREFIX + ":temp";
 
 
             //将热门商品缓存到redis
-            redisTemplate.opsForZSet().add(Constant.HOT_ITEM_CACHE_KEY,
+            redisTemplate.opsForZSet().add(Constant.HOT_ITEM_CACHE_KEY_PREFIX,
                     itemDTOList.stream().map(
                             itemDTO -> new DefaultTypedTuple<>(JSONUtil.toJsonStr(itemDTO), itemDTO.getSales().doubleValue())
                     ).collect(Collectors.toSet()));
 
             //使缓存失效
-            redisTemplate.delete(Constant.HOT_ITEM_CACHE_KEY);
+            redisTemplate.delete(Constant.HOT_ITEM_CACHE_KEY_PREFIX);
             log.info("热门商品缓存已失效");
 
              //将临时key重命名为正式key
-             redisTemplate.rename(tempKey,Constant.HOT_ITEM_CACHE_KEY);
+             redisTemplate.rename(tempKey,Constant.HOT_ITEM_CACHE_KEY_PREFIX);
 
             //设置缓存过期时间
-            redisTemplate.expire(Constant.HOT_ITEM_CACHE_KEY, Constant.HOT_ITEM_CACHE_TTL, TimeUnit.MINUTES);
+            redisTemplate.expire(Constant.HOT_ITEM_CACHE_KEY_PREFIX, Constant.CATEGORY_HOT_ITEM_IDS_CACHE_TTL, TimeUnit.MINUTES);
 
             log.info("热门商品缓存已更新");
 

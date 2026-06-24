@@ -2,9 +2,9 @@ package com.itcast.myweb.controller.client;
 
 
 import com.itcast.myweb.common.pojo.PageResult;
-import com.itcast.myweb.common.pojo.PageSearch;
 import com.itcast.myweb.common.pojo.Result;
 import com.itcast.myweb.domain.dto.CartDTO;
+import com.itcast.myweb.domain.dto.CartPageDTO;
 import com.itcast.myweb.domain.vo.CartVO;
 import com.itcast.myweb.domain.vo.ItemDetailVO;
 import com.itcast.myweb.service.client.CartService;
@@ -13,6 +13,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 购物车控制器
@@ -45,14 +47,13 @@ public class CartController {
     /**
      * 分页查询购物车
      */
-    @GetMapping("/page/list")
+    @PostMapping("/page/list")
     @ApiOperation(value = "分页查询购物车")
-    public Result pageList(PageSearch pageSearch) {
-        log.info("分页查询购物车: {}", pageSearch);
-        PageResult<CartVO> pageResult = cartService.pageList(pageSearch);
+    public Result pageList(@RequestBody CartPageDTO cartPageDTO) {
+        log.info("分页查询购物车: {}", cartPageDTO);
+        PageResult<CartVO> pageResult = cartService.pageList(cartPageDTO);
         return Result.ok(pageResult);
     }
-
 
 
     /**
@@ -63,18 +64,6 @@ public class CartController {
     public Result updateNum(@RequestBody CartDTO cartDTO) {
         log.info("修改购物车数量: {}", cartDTO);
         cartService.updateNum(cartDTO);
-        return Result.ok();
-    }
-
-
-    /**
-     * 删除购物车
-     */
-    @PutMapping("/remove/{id}")
-    @ApiOperation(value = "删除购物车")
-    public Result deleteCart(@PathVariable Long id) {
-        log.info("删除购物车: {}", id);
-        cartService.deleteCart(id);
         return Result.ok();
     }
 
@@ -91,12 +80,16 @@ public class CartController {
     }
 
 
-
-
-
-
-
-
+    /**
+     * 批量删除购物车
+     */
+    @PutMapping("/remove/batch")
+    @ApiOperation(value = "批量删除购物车")
+    public Result batchRemove(@RequestBody List<Long> ids) {
+        log.info("批量删除购物车: {}", ids);
+        cartService.batchRemove(ids);
+        return Result.ok();
+    }
 
 
 }

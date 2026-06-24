@@ -1,8 +1,14 @@
 package com.itcast.myweb.mapper;
 
+import com.baomidou.mybatisplus.annotation.InterceptorIgnore;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.itcast.myweb.domain.dto.OrderPageDTO;
 import com.itcast.myweb.domain.entity.OrderDetail;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.itcast.myweb.domain.vo.OrderVO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
 
 /**
  * <p>
@@ -14,5 +20,17 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface OrderDetailMapper extends BaseMapper<OrderDetail> {
+
+
+    /**
+     * 条件分页查询
+     */
+//    @InterceptorIgnore(
+//            others = {"com.baomidou.mybatisplus.extension.plugins.inner.LogicDeleteInnerInterceptor"}
+//    )
+    Page<OrderVO> selectPage(@Param("page") Page<OrderDetail> page,
+                             @Param("orderPageDTO") OrderPageDTO orderPageDTO,
+                             @Param("userId") Long userId,
+                             @Param("status") Integer status);
 
 }

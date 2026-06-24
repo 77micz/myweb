@@ -1,7 +1,8 @@
 package com.itcast.myweb.domain.vo;
 
 
-
+import com.itcast.myweb.common.Constant;
+import com.itcast.myweb.common.pojo.KeyFunc;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -16,24 +17,17 @@ public class ItemSkuVO {
     //商品价格
     private BigDecimal price;
 
+    //商品优惠价
+    private BigDecimal specialPrice;
+
     //商品图片
     private String image;
 
     //商品规格组合名称
     private String specsVal;
 
-    //商品标题
-    private String title;
-
-    //商家名称
-    private String merchantName;
-
     //商品库存
     private Integer stock;
-
-
-
-
 
 
 }

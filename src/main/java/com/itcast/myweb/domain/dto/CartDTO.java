@@ -10,15 +10,11 @@ import lombok.Data;
 @Data
 public class CartDTO {
 
-    private Long id;// 商品id
-
-    private Long baseId;// spu id
+    private Long id;// 购物车id
 
     private Long skuId;// SKU id
 
     private Integer num;// 商品数量
-
-
 
 
 }

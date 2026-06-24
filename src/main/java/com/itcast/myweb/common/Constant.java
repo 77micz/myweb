@@ -3,20 +3,23 @@ package com.itcast.myweb.common;
 public class Constant {
 
 
-    public static final String JWT_SECRET = "aXRjYXN0";// jwt密钥
+    // jwt密钥
+    public static final String JWT_SECRET = "aXRjYXN0";
 
-    public static final Long JWT_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7L;// jwt过期时间7天
+    // jwt过期时间7天
+    public static final Long JWT_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7L;
 
-    public static final String CODE_CACHE_KEY_PREFIX ="auth:code:";// 验证码缓存key前缀
+    // 验证码缓存key前缀
+    public static final String CODE_CACHE_KEY_PREFIX = "auth:code:";
 
-    public static final Long CODE_EXPIRE_TIME = 5L;// 验证码过期时间5分钟
+    // 验证码过期时间5分钟
+    public static final Long CODE_EXPIRE_TIME = 5L;
 
 
     //用户状态
     public static final Integer ACCOUNT_LOG_OFF = 0;//注销
     public static final Integer ACCOUNT_NORMAL = 1;//正常
     public static final Integer ACCOUNT_FREEZE = 0;//冻结
-
 
 
     //唯一id key
@@ -37,7 +40,6 @@ public class Constant {
     public static final String TOKEN_INVALID_KEY_PREFIX = "auth:logout:user:";
 
 
-
     //分类缓存
     public static final String CATEGORY_CACHE_KEY = "cache:category";
 
@@ -46,18 +48,30 @@ public class Constant {
     public static final Integer HOT_ITEM_COUNT = 1000;
 
 
+    //sku缓存key前缀(格式: item:sku:商品id)
+    public static final String ITEM_SKU_CACHE_KEY_PREFIX = "item:sku:";
+    //sku缓存ttl 15分钟
+    public static final Long ITEM_SKU_CACHE_TTL = 15L;
+
+
+    //spu缓存key前缀(格式: item:spu:商品id)
+    public static final String ITEM_SPU_CACHE_KEY_PREFIX = "item:spu:";
+    //spu缓存ttl 60分钟
+    public static final Long ITEM_SPU_CACHE_TTL = 60L;
+
+
     //热门商品缓存页数
-    public static final Integer HOT_ITEM_CACHE_PAGE = 3;
+    public static final Integer HOT_ITEM_CATEGORY_CACHE_PAGE = 5;
+    // 热门商品缓存key前缀(格式: item:hot:分类id:页码)
+    public static final String HOT_ITEM_CACHE_KEY_PREFIX = "item:hot:";
+    //分类下热门商品ids缓存过期时间15分钟，前5页
+    public static final Long CATEGORY_HOT_ITEM_IDS_CACHE_TTL = 15L;
 
 
-    public static final String HOT_ITEM_CACHE_KEY = "cache:hotItem:";// 热门商品缓存key前缀
-
-
-    //热门商品缓存过期时间，前3页
-    public static final Long HOT_ITEM_CACHE_TTL = 10L;// 热门商品缓存过期时间10分钟
-
-    //普通商品缓存过期时间，4页以后
-    public static final Long NORMAL_ITEM_CACHE_TTL = 5L;// 普通商品缓存过期时间5分钟
+    //spu关联的skuid集合缓存key前缀(格式: spu:skus:spuid)
+    public static final String SPU_SKUS_CACHE_KEY_PREFIX = "spu:skus:";
+    //spu关联的skuid集合缓存过期时间30分钟
+    public static final Long SPU_SKUS_CACHE_TTL = 30L;
 
 
     //验证码状态码
@@ -79,45 +93,42 @@ public class Constant {
     public static final String ACCOUNT_NAME_PREFIX = "user_";
 
     //商品分页大小
-    public static final Long ITEM_PAGE_SIZE = 48L;
+    public static final Long DEFAULT_ITEM_PAGE_SIZE = 48L;
 
     //购物车分页大小
-    public static final Long CART_PAGE_SIZE = 20L;
+    public static final Long DEFAULT_CART_PAGE_SIZE = 20L;
 
     //默认页码
     public static final Long DEFAULT_PAGE_NO = 1L;
 
-    //sku缓存key前缀
-    public static final String ITEM_SKU_CACHE_KEY_PREFIX = "item:sku:";
+
+    //spuids搜索key前缀(格式: item:spu:search:搜索关键字:页码)
+    public static final String ITEM_SPU_IDS_SEARCH_CACHE_KEY_PREFIX = "item:spu:search:";
+    //spuids搜索缓存过期时间5分钟
+    public static final Long ITEM_SPU_SEARCH_CACHE_TTL = 5L;
 
 
-    //sku缓存过期时间
-    public static final Long ITEM_SKU_CACHE_TTL = 5L;// 商品sku缓存过期时间5分钟
+    //缓存空值
+    public static final String NULL_VAL = "null";
+    //空值ttl 2分钟
+    public static final Long NULL_VAL_TTL = 2L;
 
-
-    //商品基础缓存key前缀
-    public static final String ITEM_BASE_LIST_CACHE_KEY_PREFIX = "item:base:list:";
-
-    //商品基础列表缓存key前缀
-    public static final String ITEM_BASE_CACHE_KEY_PREFIX = "item:base:";
-
-    //商品基础缓存过期时间
-    public static final Long ITEM_BASE_CACHE_TTL = 15L;// 商品基础缓存过期时间15分钟
-
-
-    //spu搜索key前缀
-    public static final String ITEM_SPU_SEARCH_KEY_PREFIX = "item:spu:search:";
-
-    //spu搜索缓存过期时间
-    public static final Long ITEM_SPU_SEARCH_CACHE_TTL = 10L;// 商品spu搜索缓存过期时间10分钟
 
     //购物车最大数量
     public static final Integer CART_MAX_NUM = 48;
 
-    //商品数量最大值
-    public static final Integer ITEM_MAX_NUM = 48;
+    //业务订单缓存key前缀
+    public static final String ORDER_BUSINESS_ID_CACHE_KEY_PREFIX = "order:business";
 
 
+    //订单分页大小
+    public static final Long DEFAULT_ORDER_PAGE_SIZE = 20L;
+
+    //查询订单状态-所有
+    public static final Integer ORDER_STATUS_ALL = -1;
+
+    //查询订单状态-已删除
+    public static final Integer ORDER_STATUS_DELETED = -2;
 
 
 }

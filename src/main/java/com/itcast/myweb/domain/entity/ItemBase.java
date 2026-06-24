@@ -1,12 +1,16 @@
 package com.itcast.myweb.domain.entity;
 
 import java.math.BigDecimal;
+
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.time.LocalDateTime;
 import java.io.Serializable;
 
+import com.itcast.myweb.common.Constant;
+import com.itcast.myweb.common.pojo.KeyFunc;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -26,7 +30,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @TableName("item_base")
 @ApiModel(value = "商品基础信息表spu")
-public class ItemBase implements Serializable {
+public class ItemBase implements Serializable, KeyFunc {
 
     private static final long serialVersionUID = 1L;
 
@@ -49,8 +53,11 @@ public class ItemBase implements Serializable {
     @ApiModelProperty(value = "主图")
     private String image;
 
-    @ApiModelProperty(value = "参考价格")
+    @ApiModelProperty(value = "价格")
     private BigDecimal price;
+
+    @ApiModelProperty(value = "折扣")
+    private BigDecimal discount;
 
     @ApiModelProperty(value = "所属分类id")
     private Long categoryId;
@@ -68,7 +75,7 @@ public class ItemBase implements Serializable {
     private Integer recentSales;
 
     @ApiModelProperty(value = "是否上架,(0=否,1=是)")
-    private Boolean isOnSale;
+    private Boolean onSale;
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createTime;
@@ -77,4 +84,8 @@ public class ItemBase implements Serializable {
     private LocalDateTime updateTime;
 
 
+    @Override
+    public String generateKey() {
+        return Constant.ITEM_SPU_CACHE_KEY_PREFIX + id;
+    }
 }

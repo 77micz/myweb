@@ -3,6 +3,7 @@ package com.itcast.myweb.service.client;
 
 import com.itcast.myweb.common.pojo.PageResult;
 import com.itcast.myweb.domain.dto.ItemPageDTO;
+import com.itcast.myweb.domain.entity.ItemSku;
 import com.itcast.myweb.domain.vo.CategoryVO;
 import com.itcast.myweb.domain.vo.ItemBaseVO;
 import com.itcast.myweb.domain.vo.ItemDetailVO;
@@ -21,7 +22,6 @@ public interface ItemService {
      * @return 分类列表
      */
     List<CategoryVO> category();
-
 
 
     /**
@@ -49,4 +49,13 @@ public interface ItemService {
      * @return 商品分页查询DTO
      */
     PageResult<ItemBaseVO> pageSearch(ItemPageDTO itemPageDTO);
+
+
+    /**
+     * 扣减库存
+     *
+     * @param id  商品id
+     * @param num 扣减数量
+     */
+    void deduckStock(Long id, Integer num);
 }

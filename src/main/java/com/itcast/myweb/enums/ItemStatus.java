@@ -16,6 +16,8 @@ public enum ItemStatus {
     STYLE_OUT_OF_STOCK(1, "款式缺货"),
     //商品已下架
     ITEM_OFF_SHELF(2, "商品已下架"),
+    //商品正常
+    ITEM_NORMAL(3, "商品正常"),
     ;
 
     private final Integer code;//状态码

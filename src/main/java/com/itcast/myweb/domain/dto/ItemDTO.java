@@ -2,6 +2,8 @@ package com.itcast.myweb.domain.dto;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class ItemDTO {
 
@@ -13,7 +15,7 @@ public class ItemDTO {
 
     private String title;// 商品标题
 
-    private Double price;// 商品价格
+    private BigDecimal price;// 商品价格
 
     private Integer sales;// 销售量
 

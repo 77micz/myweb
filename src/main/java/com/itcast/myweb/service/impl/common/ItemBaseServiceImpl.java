@@ -48,7 +48,7 @@ public class ItemBaseServiceImpl extends ServiceImpl<ItemBaseMapper, ItemBase> i
     private List<ItemDTO> selectBySales() {
         //获取热门商品
         List<ItemBase> itemBaseList = lambdaQuery()
-                .eq(ItemBase::getIsOnSale, true)
+                .eq(ItemBase::getOnSale, true)
                 .orderByDesc(ItemBase::getSales)
                 .last("limit " + Constant.HOT_ITEM_COUNT)
                 .list();
@@ -76,7 +76,7 @@ public class ItemBaseServiceImpl extends ServiceImpl<ItemBaseMapper, ItemBase> i
     public List<ItemDTO> selectHotList(Integer count) {
 
         // 查询缓存
-        Set<String> itemDTOList = redisTemplate.opsForZSet().range(Constant.HOT_ITEM_CACHE_KEY, 0, count - 1);
+        Set<String> itemDTOList = redisTemplate.opsForZSet().range(Constant.HOT_ITEM_CACHE_KEY_PREFIX, 0, count - 1);
 
 
         //判断缓存是否为空
@@ -88,7 +88,7 @@ public class ItemBaseServiceImpl extends ServiceImpl<ItemBaseMapper, ItemBase> i
 
         //缓存为空，查询热销商品
         List<ItemBase> itemBaseList = lambdaQuery()
-                .eq(ItemBase::getIsOnSale, true)
+                .eq(ItemBase::getOnSale, true)
                 .orderByDesc(ItemBase::getRecentSales)
                 .last("limit " + count)
                 .list();
@@ -98,7 +98,7 @@ public class ItemBaseServiceImpl extends ServiceImpl<ItemBaseMapper, ItemBase> i
         List<ItemDTO> itemDTOS = BeanUtil.copyToList(itemBaseList, ItemDTO.class);
 
         //缓存
-        redisTemplate.opsForZSet().add(Constant.HOT_ITEM_CACHE_KEY, itemDTOS.stream()
+        redisTemplate.opsForZSet().add(Constant.HOT_ITEM_CACHE_KEY_PREFIX, itemDTOS.stream()
                 .map(itemDTO -> new DefaultTypedTuple<>(
                         JSONUtil.toJsonStr(itemDTO), itemDTO.getRecentSales().doubleValue()
                 ))

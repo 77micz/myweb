@@ -2,6 +2,7 @@ package com.itcast.myweb.utils;
 
 
 import com.itcast.myweb.common.Constant;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -13,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class UniqueID {// 唯一id
 
 
@@ -20,8 +22,7 @@ public class UniqueID {// 唯一id
     private static final Long START_TIMESTAMP = 1767196800L;// 起始时间戳
 
 
-    @Autowired
-    private StringRedisTemplate stringRedisTemplate;
+    private final StringRedisTemplate stringRedisTemplate;
 
 
 
