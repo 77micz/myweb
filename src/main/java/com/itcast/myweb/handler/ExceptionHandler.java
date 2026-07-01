@@ -45,7 +45,7 @@ public class ExceptionHandler {// 异常处理
             return Result.error(0, "验证码已过期");
         } else if (e instanceof NullCodeException) {
             return Result.error(0, "验证码不能为空");
-        } else if (e instanceof IncorrectCodeException) {
+        } else if (e instanceof CodeIncorrectException) {
             return Result.error(0, "验证码错误");
         } else {
             return Result.error(0, "验证码异常：" + e.getMessage());
@@ -73,11 +73,11 @@ public class ExceptionHandler {// 异常处理
      */
     @org.springframework.web.bind.annotation.ExceptionHandler(ItemException.class)
     public Result error(ItemException e) {
-        if (e instanceof ItemDoesntExistException) {
+        if (e instanceof ItemNotFoundException) {
             return Result.error(0, "商品不存在");
         } else if (e instanceof ItemNumExceedMaxException) {
             return Result.error(0, "商品数量超出最大限制");
-        } else if (e instanceof ItemSkuDoesntExistException) {
+        } else if (e instanceof ItemSkuNotFoundException) {
             return Result.error(0, "商品sku不存在");
         } else {
             return Result.error(0, "商品异常：" + e.getMessage());
@@ -92,7 +92,7 @@ public class ExceptionHandler {// 异常处理
     public Result error(CartException e) {
         if (e instanceof CartNumExceedMaxException) {
             return Result.error(0, "购物车商品数量超出最大限制");
-        } else if (e instanceof CartDoesntExistException) {
+        } else if (e instanceof CartNotFoundException) {
             return Result.error(0, "购物车商品不存在");
         } else {
             return Result.error(0, "购物车异常：" + e.getMessage());
@@ -105,7 +105,7 @@ public class ExceptionHandler {// 异常处理
      */
     @org.springframework.web.bind.annotation.ExceptionHandler(OrderException.class)
     public Result error(OrderException e) {
-        if (e instanceof OrderDoesntExistException) {
+        if (e instanceof OrderNotFoundException) {
             return Result.error(0, "订单不存在");
         } else if (e instanceof OrderStatusException) {
             return Result.error(0, "订单状态异常");
@@ -120,7 +120,7 @@ public class ExceptionHandler {// 异常处理
      */
     @org.springframework.web.bind.annotation.ExceptionHandler(AddressException.class)
     public Result error(AddressException e) {
-        if (e instanceof AddressDoesntExistException) {
+        if (e instanceof AddressNotFoundException) {
             return Result.error(0, "地址不存在");
         } else {
             return Result.error(0, "地址异常：" + e.getMessage());

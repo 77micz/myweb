@@ -3,6 +3,8 @@ package com.itcast.myweb.domain.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.io.Serializable;
 
@@ -64,7 +66,10 @@ public class User implements Serializable {
     private String email;
 
     @ApiModelProperty(value = "余额")
-    private Integer balance;
+    private BigDecimal balance;
+
+    @ApiModelProperty(value = "支付密码")
+    private String payPw;
 
     @ApiModelProperty(value = "付款账户")
     private String account;

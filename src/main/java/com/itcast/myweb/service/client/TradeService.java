@@ -18,7 +18,7 @@ public interface TradeService {
     /**
      * 创建订单
      */
-    void createOrder(OrderDTO orderDTO);
+    List<Long> createOrder(OrderDTO orderDTO);
 
 
     /**
@@ -51,4 +51,6 @@ public interface TradeService {
      * @param id 订单ID
      */
     void removeById(Long id);
+
+
 }

@@ -118,7 +118,7 @@ public class Constant {
     public static final Integer CART_MAX_NUM = 48;
 
     //业务订单缓存key前缀
-    public static final String ORDER_BUSINESS_ID_CACHE_KEY_PREFIX = "order:business";
+    public static final String ORDER_UNIQUE_ID_CACHE_KEY_PREFIX = "order:business";
 
 
     //订单分页大小
@@ -130,5 +130,19 @@ public class Constant {
     //查询订单状态-已删除
     public static final Integer ORDER_STATUS_DELETED = -2;
 
+
+    //生成支付单id的缓存key前缀
+    public static final String PAY_ORDER_UNIQUE_ID_CACHE_KEY_PREFIX = "payOrder";
+
+
+    //支付分布式锁key前缀
+    public static final String PAY_LOCK_KEY = "pay:lock:";
+    //支付分布式锁过期时间10秒
+    public static final Long PAY_LOCK_TTL = 10L;
+
+    //取消支付分布式锁key前缀
+    public static final String PAY_CANCEL_LOCK_KEY = "pay:cancel:lock:";
+    //取消支付分布式锁过期时间10秒
+    public static final Long PAY_CANCEL_LOCK_TTL = 10L;
 
 }

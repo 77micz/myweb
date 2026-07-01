@@ -38,8 +38,7 @@ public class TradeController {
     @ApiOperation(value = "创建订单")
     public Result createOrder(@RequestBody OrderDTO orderDTO) {
         log.info("创建订单: {}", orderDTO);
-        tradeService.createOrder(orderDTO);
-        return Result.ok();
+        return Result.ok(tradeService.createOrder(orderDTO));
     }
 
 

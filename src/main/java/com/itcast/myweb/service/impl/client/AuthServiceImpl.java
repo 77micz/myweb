@@ -87,7 +87,7 @@ public class AuthServiceImpl implements AuthService {
         if (Objects.equals(checkCode, Constant.CODE_EMPTY)) {
             throw new NullCodeException(Constant.MSG_EMPTY);
         } else if (Objects.equals(checkCode, Constant.CODE_ERROR)) {
-            throw new IncorrectCodeException(Constant.MSG_ERROR);
+            throw new CodeIncorrectException(Constant.MSG_ERROR);
         } else if (Objects.equals(checkCode, Constant.CODE_EXPIRE)) {
             throw new CodeExpiredException(Constant.MSG_EXPIRE);
         }

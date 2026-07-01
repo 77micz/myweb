@@ -11,7 +11,6 @@ import com.itcast.myweb.common.pojo.PageResult;
 import com.itcast.myweb.domain.dto.CartDTO;
 import com.itcast.myweb.domain.dto.CartPageDTO;
 import com.itcast.myweb.domain.dto.UserDTO;
-import com.itcast.myweb.domain.entity.Address;
 import com.itcast.myweb.domain.entity.ItemBase;
 import com.itcast.myweb.domain.entity.ItemSku;
 import com.itcast.myweb.domain.entity.ShoppingCart;
@@ -21,7 +20,6 @@ import com.itcast.myweb.domain.vo.ItemDetailVO;
 import com.itcast.myweb.domain.vo.ItemSkuVO;
 import com.itcast.myweb.enums.ItemStatus;
 import com.itcast.myweb.service.client.CartService;
-import com.itcast.myweb.service.client.ItemService;
 import com.itcast.myweb.service.common.*;
 import com.itcast.myweb.utils.OrderItemUtils;
 import com.itcast.myweb.utils.TTLOffset;
@@ -34,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -93,7 +90,7 @@ public class CartServiceImpl implements CartService {
                     .one();
             //判断是否为空
             if (itemSku == null) {
-                throw new ItemDoesntExistException("商品不存在");
+                throw new ItemNotFoundException("商品不存在");
             }
         }
 
@@ -240,7 +237,7 @@ public class CartServiceImpl implements CartService {
 
         //判断购物车是否存在
         if (cart == null) {
-            throw new CartDoesntExistException("购物车不存在");
+            throw new CartNotFoundException("购物车不存在");
         }
 
         Long baseId = cart.getBaseId();
@@ -258,7 +255,7 @@ public class CartServiceImpl implements CartService {
             itemBase = itemBaseService.getById(baseId);
             //判断商品基础信息是否存在
             if (itemBase == null) {
-                throw new ItemDoesntExistException("商品不存在");
+                throw new ItemNotFoundException("商品不存在");
             }
             //缓存商品基础信息
             redisTemplate.opsForValue().set(Constant.ITEM_SPU_CACHE_KEY_PREFIX + baseId, JSONUtil.toJsonStr(itemBase), TTLOffset.getRandomTTL(Constant.ITEM_SPU_CACHE_TTL), TimeUnit.MINUTES);
@@ -282,7 +279,7 @@ public class CartServiceImpl implements CartService {
                     .list();
             //判断商品sku列表是否为空
             if (itemSkuList == null || itemSkuList.isEmpty()) {
-                throw new ItemSkuDoesntExistException("该sku不存在");
+                throw new ItemSkuNotFoundException("该sku不存在");
             }
             //缓存商品sku_ids
             itemService.setIdsToListCache(Constant.SPU_SKUS_CACHE_KEY_PREFIX + baseId, itemSkuList, ItemSku::getId, TTLOffset.getRandomTTL(Constant.SPU_SKUS_CACHE_TTL), TimeUnit.MINUTES);
@@ -314,7 +311,7 @@ public class CartServiceImpl implements CartService {
                         .list();
                 //判断缺失的sku列表是否为空
                 if (list == null || list.isEmpty()) {
-                    throw new ItemSkuDoesntExistException("该sku不存在");
+                    throw new ItemSkuNotFoundException("该sku不存在");
                 }
                 //缓存缺失sku
                 itemService.multiSetStringCache(list, Constant.ITEM_SKU_CACHE_TTL, TimeUnit.MINUTES);

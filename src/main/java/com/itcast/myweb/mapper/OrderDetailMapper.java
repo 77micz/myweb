@@ -9,6 +9,8 @@ import com.itcast.myweb.domain.vo.OrderVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 
 /**
  * <p>
@@ -32,5 +34,17 @@ public interface OrderDetailMapper extends BaseMapper<OrderDetail> {
                              @Param("orderPageDTO") OrderPageDTO orderPageDTO,
                              @Param("userId") Long userId,
                              @Param("status") Integer status);
+
+
+    /**
+     * 根据订单ID列表查询订单明细
+     *
+     * @param orderIds 订单ID列表
+     * @return 订单明细列表
+     */
+    List<OrderDetail> listByOrderIds(@Param("orderIds") List<Long> orderIds,
+                                     @Param("userId") Long userId,
+                                     @Param("status") Integer status);
+
 
 }

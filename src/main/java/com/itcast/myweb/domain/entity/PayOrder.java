@@ -1,14 +1,17 @@
 package com.itcast.myweb.domain.entity;
 
 import java.math.BigDecimal;
+
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.time.LocalDateTime;
 import java.io.Serializable;
 
 import com.itcast.myweb.enums.PayStatus;
 import com.itcast.myweb.enums.PayType;
+import com.itcast.myweb.enums.PaymentType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -36,14 +39,11 @@ public class PayOrder implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @ApiModelProperty(value = "业务订单号")
-    private Long bizOrderNo;
-
     @ApiModelProperty(value = "支付单号")
     private Long payOrderNo;
 
     @ApiModelProperty(value = "支付用户id")
-    private Long bizUserId;
+    private Long userId;
 
     @ApiModelProperty(value = "支付渠道编码")
     private String payChannelCode;
@@ -54,7 +54,7 @@ public class PayOrder implements Serializable {
     @ApiModelProperty(value = "支付类型，1：h5,2:小程序，3：公众号，4：扫码，5：余额支付")
     private PayType payType;
 
-    @ApiModelProperty(value = "支付状态，0：待提交，1:待支付，2：支付超时或取消，3：支付成功")
+    @ApiModelProperty(value = "支付状态，1:待支付，2：支付超时，3：支付取消，4：支付成功")
     private PayStatus status;
 
     @ApiModelProperty(value = "拓展字段，用于传递不同渠道单独处理的字段")
@@ -65,6 +65,9 @@ public class PayOrder implements Serializable {
 
     @ApiModelProperty(value = "第三方返回提示信息")
     private String resultMsg;
+
+    @ApiModelProperty(value = "支付取消时间")
+    private LocalDateTime payCancelTime;
 
     @ApiModelProperty(value = "支付成功时间")
     private LocalDateTime paySuccessTime;
@@ -87,8 +90,8 @@ public class PayOrder implements Serializable {
     @ApiModelProperty(value = "更新人")
     private Long updater;
 
-    @ApiModelProperty(value = "逻辑删除")
-    private Boolean isDelete;
+    @ApiModelProperty(value = "逻辑删除,0：未删除,1：已删除")
+    private Boolean deleted;
 
 
 }

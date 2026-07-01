@@ -5,7 +5,7 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.itcast.myweb.common.Constant;
-import com.itcast.myweb.common.exception.InsufficientStockException;
+import com.itcast.myweb.common.exception.ItemStockInsufficientException;
 import com.itcast.myweb.common.pojo.KeyFunc;
 import com.itcast.myweb.common.pojo.OrderClazz;
 import com.itcast.myweb.common.pojo.PageResult;
@@ -362,7 +362,7 @@ public class ItemServiceImpl implements ItemService {
         //查询库存是否充足
         ItemSku itemSku = itemSkuService.getById(id);
         if (itemSku == null || itemSku.getStock() < num) {
-            throw new InsufficientStockException("库存不足");
+            throw new ItemStockInsufficientException("库存不足");
         }
 
 

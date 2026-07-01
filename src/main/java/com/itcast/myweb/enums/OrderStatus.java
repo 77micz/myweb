@@ -2,6 +2,7 @@ package com.itcast.myweb.enums;
 
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 /**
@@ -20,19 +21,20 @@ public enum OrderStatus {
 
     @EnumValue//枚举值
     private final Integer status;//订单状态
+    @JsonValue//描述
     private final String desc;//描述
 
 
     /**
      * 构造方法
+     *
      * @param status 订单状态
-     * @param desc 描述
+     * @param desc   描述
      */
     OrderStatus(Integer status, String desc) {
         this.status = status;
         this.desc = desc;
     }
-
 
 
 }

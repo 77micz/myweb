@@ -15,7 +15,6 @@ import com.itcast.myweb.enums.MyOrderStatus;
 import com.itcast.myweb.enums.OrderStatus;
 import com.itcast.myweb.enums.PaymentType;
 import com.itcast.myweb.mapper.OrderDetailMapper;
-import com.itcast.myweb.mapper.OrderMapper;
 import com.itcast.myweb.service.client.ItemService;
 import com.itcast.myweb.service.client.TradeService;
 import com.itcast.myweb.service.common.*;
@@ -23,7 +22,6 @@ import com.itcast.myweb.utils.OrderItemUtils;
 import com.itcast.myweb.utils.UniqueID;
 import com.itcast.myweb.utils.UserHolder;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,9 +60,6 @@ public class TradeServiceImpl implements TradeService {
     //订单明细服务
     private final IOrderDetailService orderDetailService;
 
-    //订单mapper
-    private final OrderMapper orderMapper;
-
     //订单详情mapper
     private final OrderDetailMapper orderDetailMapper;
 
@@ -77,50 +72,55 @@ public class TradeServiceImpl implements TradeService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void createOrder(OrderDTO orderDTO) {
+    public List<Long> createOrder(OrderDTO orderDTO) {
 
         //0.准备数据
 
+        //获取关联购物车id与收货地址id对应关系
+        Map<Long, Long> cartIdAddressIdMap = orderDTO.getCartIdAddressIdMap();
         //获取当前用户id
         Long userId = UserHolder.get().getId();
-        //获取购物车ids
-        List<Long> cartIds = orderDTO.getCartIds();
         //获取支付方式
         PaymentType paymentType = orderDTO.getPaymentType();
-        //获取收货地址id
-        Long addressId = orderDTO.getAddressId();
         //获取sku_id
         Long skuId = orderDTO.getSkuId();
         //获取数量
         Integer num = orderDTO.getNum();
+        //获取收货地址id
+        Long addressId = orderDTO.getAddressId();
 
 
-        //判断收货地址是否存在
-        if (addressId == null) {
-            throw new AddressDoesntExistException("收货地址不存在");
-        }
-        Address one = addressService.lambdaQuery()
-                .eq(Address::getId, addressId)
-                .eq(Address::getUserId, userId)
-                .one();
-        if (one == null) {
-            throw new AddressDoesntExistException("收货地址不存在");
-        }
-
-
+        List<Long> orderIds = new ArrayList<>();
         //判断在哪创建订单
-        if (cartIds != null && !cartIds.isEmpty()) {
-            cartMethod(userId, cartIds, paymentType, one);
-        } else if (skuId != null) {
-            //判断数量
-            if (num <= 0) {
-                throw new IllegalArgumentException("数量必须大于0");
+        if (cartIdAddressIdMap != null && !cartIdAddressIdMap.isEmpty()) {
+            //获取购物车ids
+            List<Long> cartIds = new ArrayList<>(cartIdAddressIdMap.keySet());
+            //获取收货地址ids
+            List<Long> addressIds = new ArrayList<>(cartIdAddressIdMap.values());
+            //判断收货地址是否存在
+            if (addressIds.isEmpty()) {
+                throw new AddressNotFoundException("收货地址不存在");
             }
-            itemMethod(skuId, num, userId, paymentType, one);
+            List<Address> addresses = addressService.lambdaQuery()
+                    .in(Address::getId, addressIds)
+                    .eq(Address::getUserId, userId)
+                    .list();
+            if (addresses == null || addresses.size() != addressIds.size()) {
+                throw new AddressNotFoundException("收货地址缺失");
+            }
+            orderIds = cartMethod(userId, cartIds, paymentType, addresses, cartIdAddressIdMap);
+        } else if (skuId != null) {
+            //判断数量是否大于0
+            if (num <= 0) {
+                throw new OrderItemNumberException("数量必须大于0");
+            }
+            //创建订单
+            orderIds = itemMethod(skuId, num, userId, paymentType, addressId);
         }
 
 
         //5.返回
+        return orderIds;
 
 
     }
@@ -144,7 +144,7 @@ public class TradeServiceImpl implements TradeService {
                 .eq(Order::getId, id)
                 .count();
         if (count == 0) {
-            throw new OrderDoesntExistException("订单不存在");
+            throw new OrderNotFoundException("订单不存在");
         }
 
 
@@ -163,7 +163,7 @@ public class TradeServiceImpl implements TradeService {
                 .eq(OrderDetail::getOrderId, id)
                 .count();
         if (detailCount == 0) {
-            throw new OrderDetailNotFoundException("订单明细不存在");
+            throw new OrderDetailMissException("订单明细不存在");
         }
 
         QueryWrapper<OrderDetail> orderDetailQueryWrapper = new QueryWrapper<>();
@@ -192,7 +192,7 @@ public class TradeServiceImpl implements TradeService {
                 .one();
         //判断订单是否存在
         if (order == null) {
-            throw new OrderDoesntExistException("订单不存在");
+            throw new OrderNotFoundException("订单不存在");
         }
 
 
@@ -203,7 +203,7 @@ public class TradeServiceImpl implements TradeService {
                 .one();
         //判断订单明细是否存在
         if (orderDetail == null) {
-            throw new OrderDetailNotFoundException("订单明细不存在");
+            throw new OrderDetailMissException("订单明细不存在");
         }
 
 
@@ -231,7 +231,7 @@ public class TradeServiceImpl implements TradeService {
                 .one();
         //判断订单是否存在
         if (order == null) {
-            throw new OrderDoesntExistException("订单不存在");
+            throw new OrderNotFoundException("订单不存在");
         }
         //判断订单状态
         if (!order.getStatus().equals(OrderStatus.PENDING_PAY)) {
@@ -270,7 +270,7 @@ public class TradeServiceImpl implements TradeService {
                 .one();
         //判断订单是否存在
         if (order == null) {
-            throw new OrderDoesntExistException("订单不存在");
+            throw new OrderNotFoundException("订单不存在");
         }
         //判断订单状态
         if (!order.getStatus().equals(OrderStatus.PENDING_RECEIVE)) {
@@ -333,35 +333,70 @@ public class TradeServiceImpl implements TradeService {
 
 
     //商品页面创建订单
-    private void itemMethod(Long skuId, Integer num, Long userId, PaymentType paymentType, Address one) {
-        //2.查询商品
+    private List<Long> itemMethod(Long skuId, Integer num, Long userId, PaymentType paymentType, Long addressId) {
+        //1.查询商品
         ItemSku itemSku = itemSkuService.lambdaQuery()
                 .eq(ItemSku::getId, skuId)
                 .one();
 
         //判断库存是否足够
         if (itemSku.getStock() < num) {
-            throw new InsufficientStockException("库存不足");
+            throw new ItemStockInsufficientException("库存不足");
         }
         //库存充足，扣减库存
         itemService.deduckStock(itemSku.getId(), num);
 
+        //关联skuId与地址
+        Map<Long, Address> skuIdAddressMap = new HashMap<>();
+        Address address = addressService.lambdaQuery()
+                .eq(Address::getId, addressId)
+                .eq(Address::getUserId, userId)
+                .one();
+        //判断地址是否存在
+        if (address == null) {
+            throw new AddressMissException("收货地址缺失");
+        }
+        skuIdAddressMap.put(itemSku.getId(), address);
+
 
         //2.创建订单与订单明细
-        saveOrder(Collections.singletonList(itemSku), Collections.singletonMap(itemSku.getId(), num), userId, paymentType, one);
+
+        return saveOrder(Collections.singletonList(itemSku), Collections.singletonMap(itemSku.getId(), num), userId, paymentType, skuIdAddressMap);
     }
 
 
     //购物车创建订单
-    private void cartMethod(Long userId, List<Long> cartIds, PaymentType paymentType, Address one) {
+    private List<Long> cartMethod(Long userId, List<Long> cartIds, PaymentType paymentType, List<Address> addresses, Map<Long, Long> cartIdAddressIdMap) {
+
+        //判断关联购物车id与收货地址id对应关系是否正确
+        if (cartIdAddressIdMap == null || cartIdAddressIdMap.isEmpty()) {
+            throw new CartItemMissException("购物车id与收货地址id对应关系不能为空");
+        }
+
         //1.查询购物车
         List<ShoppingCart> cartList = shoppingCartService.lambdaQuery()
                 .eq(ShoppingCart::getUserId, userId)
                 .in(ShoppingCart::getId, cartIds)
                 .list();
+
         //判断购物车是否存在
         if (cartList == null || cartList.size() != cartIds.size()) {
             throw new CartItemMissException("购物车商品缺失");
+        }
+
+        //关联cartId与skuId
+        Map<Long, Long> cartIdSkuIdMap = cartList.stream().collect(Collectors.toMap(ShoppingCart::getId, ShoppingCart::getSkuId));
+
+        //循环处理购物车id，获取skuId与地址关联
+        Map<Long, Address> skuIdAddressMap = new HashMap<>();
+        for (Long cartId : cartIds) {
+            Long skuId = cartIdSkuIdMap.get(cartId);
+            Long addressId = cartIdAddressIdMap.get(cartId);
+            Address address = addresses.stream().filter(addr -> addr.getId().equals(addressId)).findFirst().orElse(null);
+            if (address == null) {
+                throw new AddressNotFoundException("收货地址缺失");
+            }
+            skuIdAddressMap.put(skuId, address);
         }
 
 
@@ -369,32 +404,41 @@ public class TradeServiceImpl implements TradeService {
         List<ItemSku> itemSkus = itemSkuService.lambdaQuery()
                 .in(ItemSku::getId, cartList.stream().map(ShoppingCart::getSkuId).collect(Collectors.toList()))
                 .list();
-        //关联商品id和商品
-        Map<Long, ShoppingCart> cartMap = cartList.stream().collect(Collectors.toMap(ShoppingCart::getSkuId, cart -> cart));
-        //商品id与num关联
-        Map<Long, Integer> numMap = cartList.stream().collect(Collectors.toMap(ShoppingCart::getSkuId, ShoppingCart::getNum));
+
+        //判断商品是否缺失
+        if (itemSkus == null || itemSkus.size() != cartList.size()) {
+            throw new CartItemMissException("购物车商品缺失");
+        }
+
+        //关联skuId和购物车
+        Map<Long, ShoppingCart> skuIdCartMap = cartList.stream().collect(Collectors.toMap(ShoppingCart::getSkuId, cart -> cart));
+
+        //skuId与num关联
+        Map<Long, Integer> skuIdNumMap = cartList.stream().collect(Collectors.toMap(ShoppingCart::getSkuId, ShoppingCart::getNum));
 
         //遍历商品判断库存是否足够
         for (ItemSku itemSku : itemSkus) {
-            if (itemSku.getStock() < cartMap.get(itemSku.getId()).getNum()) {
-                throw new InsufficientStockException("库存不足");
+            if (itemSku.getStock() < skuIdCartMap.get(itemSku.getId()).getNum()) {
+                throw new ItemStockInsufficientException("库存不足");
             }
             //库存充足，扣减库存
-            itemService.deduckStock(itemSku.getId(), cartMap.get(itemSku.getId()).getNum());
+            itemService.deduckStock(itemSku.getId(), skuIdCartMap.get(itemSku.getId()).getNum());
         }
 
 
         //2.创建订单与订单明细
-        saveOrder(itemSkus, numMap, userId, paymentType, one);
+        List<Long> ids = saveOrder(itemSkus, skuIdNumMap, userId, paymentType, skuIdAddressMap);
 
 
         //4.删除购物车
         shoppingCartService.removeByIds(cartIds);
+
+        return ids;
     }
 
 
     //订单写入数据库
-    private void saveOrder(List<ItemSku> itemSkuList, Map<Long, Integer> numMap, Long userId, PaymentType paymentType, Address address) {
+    private List<Long> saveOrder(List<ItemSku> itemSkuList, Map<Long, Integer> numMap, Long userId, PaymentType paymentType, Map<Long, Address> skuIdAddressMap) {
 
 
         //查询spu折扣
@@ -407,15 +451,18 @@ public class TradeServiceImpl implements TradeService {
 
         List<OrderDetail> orderDetailList = new ArrayList<>();
         List<Order> orderList = new ArrayList<>();
+
+        List<Long> ids = new ArrayList<>();//订单id列表
         //遍历构建订单与明细
         for (ItemSku itemSku : itemSkuList) {
 
             //订单id
-            Long uniqueId = uniqueID.getUniqueId(Constant.ORDER_BUSINESS_ID_CACHE_KEY_PREFIX);
+            Long uniqueId = uniqueID.getUniqueId(Constant.ORDER_UNIQUE_ID_CACHE_KEY_PREFIX);
+            ids.add(uniqueId);
 
             orderDetailList.add(getOrderDetail(itemSku, uniqueId, numMap.get(itemSku.getId()), userId, spuMap.get(itemSku.getBaseId())));
 
-            orderList.add(getOrder(userId, paymentType, address, uniqueId));
+            orderList.add(getOrder(userId, paymentType, skuIdAddressMap.get(itemSku.getId()), uniqueId));
 
         }
 
@@ -427,6 +474,8 @@ public class TradeServiceImpl implements TradeService {
         if (!orderList.isEmpty()) {
             orderService.saveBatch(orderList);
         }
+
+        return ids;
 
 
     }
@@ -470,8 +519,8 @@ public class TradeServiceImpl implements TradeService {
         }
         //暂时没有运费
         orderDetail.setShippingFee(BigDecimal.ZERO);
-        //实付款统一为0
-        orderDetail.setActualPayment(BigDecimal.ZERO);
+        //实付款设为优惠后价格
+        orderDetail.setActualPayment(totalPrice.subtract(orderDetail.getPreferential()));
 
 
         orderDetail.setId(null);

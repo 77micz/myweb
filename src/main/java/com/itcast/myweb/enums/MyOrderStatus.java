@@ -1,6 +1,7 @@
 package com.itcast.myweb.enums;
 
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.itcast.myweb.common.Constant;
 import lombok.Getter;
 
@@ -32,6 +33,19 @@ public enum MyOrderStatus {
     MyOrderStatus(Integer status, String desc) {
         this.status = status;
         this.desc = desc;
+    }
+
+
+    // 反序列化：根据数字找枚举，方便前端传参
+    @JsonCreator
+    public static MyOrderStatus fromStatus(Integer status) {
+        if (status == null) return null;
+        for (MyOrderStatus value : values()) {
+            if (value.status.equals(status)) {
+                return value;
+            }
+        }
+        throw new IllegalArgumentException("无效的状态值: " + status);
     }
 
 
