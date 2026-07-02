@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itcast.myweb.mapper.OrderDetailMapper">
+
+    <select id="selectPage" resultType="com.itcast.myweb.domain.vo.OrderVO">
+        select d.*,o.status from tb_order o, order_detail d
+        <where>
+            o.id = d.order_id
+
+            <choose>
+                <when test="status != null and status >= 0">
+                    and o.status = #{status}
+                    and o.deleted = 0
+                </when>
+                <when test="status != null and status == -1">
+                    and o.deleted = 0
+                </when>
+                <when test="status != null and status == -2">
+                    and o.deleted = 1
+                </when>
+                <!-- 当 status 为 ALL（null）时，默认查未删除的订单 -->
+                <otherwise>
+                    and o.deleted = 0
+                </otherwise>
+            </choose>
+
+            <if test="orderPageDTO.orderId != null">
+                and d.order_id = #{orderPageDTO.orderId}
+            </if>
+            <if test="orderPageDTO.title != null and orderPageDTO.title != '' ">
+                and d.title like concat('%',#{orderPageDTO.title},'%')
+            </if>
+            <if test="orderPageDTO.merchantName != null and orderPageDTO.merchantName !='' ">
+                and d.merchant_name like concat('%',#{orderPageDTO.merchantName},'%')
+            </if>
+            <if test="userId != null">
+                and d.user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="listByOrderIds" resultType="com.itcast.myweb.domain.entity.OrderDetail">
+        select d.*
+        from order_detail d,
+        tb_order o
+        <where>
+            <if test="orderIds != null and orderIds.size() > 0">
+                and d.order_id in
+                <foreach collection="orderIds" item="orderId" open="(" separator="," close=")">
+                    #{orderId}
+                </foreach>
+            </if>
+            <if test="userId != null">
+                and o.user_id = #{userId}
+            </if>
+            <if test="status != null">
+                and o.status = #{status}
+            </if>
+            and o.id = d.order_id
+            and o.deleted = 0
+        </where>
+    </select>
+
+
+</mapper>
