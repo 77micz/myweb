@@ -73,6 +73,9 @@ public class Address implements Serializable {
     @ApiModelProperty(value = "是否默认地址,(0=否，1=是)")
     private Boolean isDefault;
 
+    @ApiModelProperty(value = "是否删除,(0=否，1=是)")
+    private Boolean deleted;
+
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createTime;
 

@@ -79,6 +79,8 @@ public class ExceptionHandler {// 异常处理
             return Result.error(0, "商品数量超出最大限制");
         } else if (e instanceof ItemSkuNotFoundException) {
             return Result.error(0, "商品sku不存在");
+        } else if (e instanceof ItemStockInsufficientException) {
+            return Result.error(0, "商品库存不足");
         } else {
             return Result.error(0, "商品异常：" + e.getMessage());
         }
@@ -94,6 +96,8 @@ public class ExceptionHandler {// 异常处理
             return Result.error(0, "购物车商品数量超出最大限制");
         } else if (e instanceof CartNotFoundException) {
             return Result.error(0, "购物车商品不存在");
+        } else if (e instanceof CartItemMissException) {
+            return Result.error(0, "购物车商品缺失");
         } else {
             return Result.error(0, "购物车异常：" + e.getMessage());
         }
@@ -109,8 +113,33 @@ public class ExceptionHandler {// 异常处理
             return Result.error(0, "订单不存在");
         } else if (e instanceof OrderStatusException) {
             return Result.error(0, "订单状态异常");
+        } else if (e instanceof OrderItemNumberException) {
+            return Result.error(0, "数量必须大于0");
+        } else if (e instanceof OrderNumberInconsistentException) {
+            return Result.error(0, "订单数不一致");
+        } else if (e instanceof OrderDetailMissException) {
+            return Result.error(0, "订单明细缺失");
         } else {
             return Result.error(0, "订单异常：" + e.getMessage());
+        }
+    }
+
+
+    /**
+     * 处理支付相关异常
+     */
+    @org.springframework.web.bind.annotation.ExceptionHandler(PayException.class)
+    public Result error(PayException e) {
+        if (e instanceof PayOrderNotFoundException) {
+            return Result.error(0, "支付订单不存在");
+        } else if (e instanceof PayOrderStatusException) {
+            return Result.error(0, "支付订单状态异常");
+        } else if (e instanceof PayLockGetFailException) {
+            return Result.error(0, "支付正在处理，请勿重复提交");
+        } else if (e instanceof PayCancelLockGetFailException) {
+            return Result.error(0, "取消支付正在处理，请勿重复提交");
+        } else {
+            return Result.error(0, "支付异常：" + e.getMessage());
         }
     }
 
@@ -122,6 +151,10 @@ public class ExceptionHandler {// 异常处理
     public Result error(AddressException e) {
         if (e instanceof AddressNotFoundException) {
             return Result.error(0, "地址不存在");
+        } else if (e instanceof AddressMissException) {
+            return Result.error(0, "地址缺失");
+        } else if (e instanceof AddressNumberInconsistentException) {
+            return Result.error(0, "地址数不一致");
         } else {
             return Result.error(0, "地址异常：" + e.getMessage());
         }
@@ -129,14 +162,18 @@ public class ExceptionHandler {// 异常处理
 
 
     /**
-     * 处理令牌相关异常
+     * 处理用户相关异常
      */
-    @org.springframework.web.bind.annotation.ExceptionHandler(TokenException.class)
-    public Result error(TokenException e) {
-        if (e instanceof NullTokenException) {
-            return Result.error(0, "令牌为空");
+    @org.springframework.web.bind.annotation.ExceptionHandler(UserException.class)
+    public Result error(UserException e) {
+        if (e instanceof UserNotFoundException) {
+            return Result.error(0, "用户不存在");
+        } else if (e instanceof UserPasswordErrorException) {
+            return Result.error(0, "用户密码错误");
+        } else if (e instanceof UserBalanceNotEnoughException) {
+            return Result.error(0, "用户余额不足");
         } else {
-            return Result.error(0, "令牌异常：" + e.getMessage());
+            return Result.error(0, "用户异常：" + e.getMessage());
         }
     }
 

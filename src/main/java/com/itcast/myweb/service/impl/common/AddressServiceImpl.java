@@ -14,7 +14,8 @@ import org.springframework.stereotype.Service;
  * @author nick
  * @since 2026-03-28
  */
-@Service
+//重新定义Bean的名称
+@Service("IAddressServiceImpl")
 public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> implements IAddressService {
 
 }

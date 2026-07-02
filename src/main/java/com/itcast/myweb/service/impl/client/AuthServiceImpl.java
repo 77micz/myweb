@@ -127,6 +127,9 @@ public class AuthServiceImpl implements AuthService {
 
         //填充map
         userMap.put("id", userByPhone.getId());
+        if (userByPhone.getDefaultAddressId() != null) {
+            userMap.put("addressId", userByPhone.getDefaultAddressId());
+        }
         userMap.put("nickName", userByPhone.getNick());
         userMap.put("image", userByPhone.getImage());
         userMap.put("class", UserDTO.class.getName());
