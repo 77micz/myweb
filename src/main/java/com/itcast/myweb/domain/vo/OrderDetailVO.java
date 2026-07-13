@@ -1,8 +1,6 @@
 package com.itcast.myweb.domain.vo;
 
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.itcast.myweb.enums.OrderStatus;
 import com.itcast.myweb.enums.PaymentType;
 import io.swagger.annotations.ApiModelProperty;
@@ -91,6 +89,12 @@ public class OrderDetailVO {
 
     @ApiModelProperty(value = "实付款")
     private BigDecimal actualPayment;
+
+
+    //-----------------------------------------payOrder
+
+    @ApiModelProperty(value = "支付单号")
+    private Long payOrderNo;
 
 
 }

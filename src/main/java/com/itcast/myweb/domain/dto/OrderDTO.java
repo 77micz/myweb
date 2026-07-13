@@ -17,6 +17,9 @@ public class OrderDTO {
     @ApiModelProperty(value = "支付方式，（1=支付宝，2=微信，3=余额）")
     private PaymentType paymentType;
 
+    //支付渠道编码
+    private String payChannelCode;
+
     /**
      * 订单id
      */

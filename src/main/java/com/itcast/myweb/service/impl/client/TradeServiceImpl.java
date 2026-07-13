@@ -16,12 +16,17 @@ import com.itcast.myweb.enums.OrderStatus;
 import com.itcast.myweb.enums.PaymentType;
 import com.itcast.myweb.mapper.OrderDetailMapper;
 import com.itcast.myweb.service.client.ItemService;
+import com.itcast.myweb.service.client.PayService;
 import com.itcast.myweb.service.client.TradeService;
 import com.itcast.myweb.service.common.*;
 import com.itcast.myweb.utils.OrderItemUtils;
 import com.itcast.myweb.utils.UniqueID;
 import com.itcast.myweb.utils.UserHolder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessagePostProcessor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,6 +70,12 @@ public class TradeServiceImpl implements TradeService {
 
     //商品服务
     private final ItemService itemService;
+
+    //rabbitTemplate
+    private final RabbitTemplate rabbitTemplate;
+
+    //payOrderService
+    private final IPayOrderService payOrderService;
 
 
     /**
@@ -119,7 +130,6 @@ public class TradeServiceImpl implements TradeService {
         }
 
 
-        //5.返回
         return orderIds;
 
 
@@ -217,6 +227,7 @@ public class TradeServiceImpl implements TradeService {
     /**
      * 取消订单
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void cancel(Long id) {
 
@@ -229,6 +240,7 @@ public class TradeServiceImpl implements TradeService {
                 .eq(Order::getUserId, userId)
                 .eq(Order::getId, id)
                 .one();
+
         //判断订单是否存在
         if (order == null) {
             throw new OrderNotFoundException("订单不存在");
@@ -239,15 +251,37 @@ public class TradeServiceImpl implements TradeService {
         }
 
 
+        //查询订单明细
+        OrderDetail orderDetail = orderDetailService.lambdaQuery()
+                .eq(OrderDetail::getOrderId, id)
+                .one();
+
+        //判断订单明细是否存在
+        if (orderDetail == null) {
+            throw new OrderDetailMissException("订单明细不存在");
+        }
+
+        Long skuId = orderDetail.getSkuId();
+        Integer num = orderDetail.getNum();
+
+
         //2.修改订单
         LocalDateTime now = LocalDateTime.now();
         orderService.lambdaUpdate()
                 .eq(Order::getId, id)
                 .eq(Order::getUserId, userId)
+                .eq(Order::getStatus,OrderStatus.PENDING_PAY)
                 .set(Order::getStatus, OrderStatus.CANCEL)
                 .set(Order::getUpdateTime, now)
                 .set(Order::getCancelTime, now)
                 .set(Order::getCompleteTime, now)
+                .update();
+
+
+        //3.归还库存
+        itemSkuService.lambdaUpdate()
+                .eq(ItemSku::getId, skuId)
+                .setSql(num > 0, "stock = stock + " + num)
                 .update();
 
 
@@ -322,12 +356,23 @@ public class TradeServiceImpl implements TradeService {
 
 
     //获取订单明细VO
-    private static OrderDetailVO getOrderDetailVO(Order order, OrderDetail orderDetail) {
+    private OrderDetailVO getOrderDetailVO(Order order, OrderDetail orderDetail) {
+
+        //1.查询支付单
+        PayOrder payOrder = payOrderService.lambdaQuery()
+                .eq(PayOrder::getBizOrderNo, order.getId())
+                .one();
+        if (payOrder == null) {
+            throw new PayOrderMissException("支付单缺失");
+        }
+
         OrderDetailVO orderDetailVO = new OrderDetailVO();
         BeanUtil.copyProperties(orderDetail, orderDetailVO);
         BeanUtil.copyProperties(order, orderDetailVO);
         orderDetailVO.setOrderDetailId(orderDetail.getId());
         orderDetailVO.setId(order.getId());
+        //设置支付单号
+        orderDetailVO.setPayOrderNo(payOrder.getPayOrderNo());
         return orderDetailVO;
     }
 

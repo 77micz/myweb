@@ -3,17 +3,22 @@ package com.itcast.myweb.controller.client;
 
 import com.itcast.myweb.common.pojo.Result;
 import com.itcast.myweb.domain.dto.PayDTO;
+import com.itcast.myweb.enums.OrderStatus;
 import com.itcast.myweb.enums.PaymentType;
 import com.itcast.myweb.service.client.PayService;
+import com.itcast.myweb.service.client.TradeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/myweb/c/pay")
@@ -26,6 +31,11 @@ public class PayController {
      * payService
      */
     private final PayService payService;
+
+    /**
+     * 交易服务
+     */
+    private final TradeService tradeService;
 
 
     /**
@@ -68,6 +78,20 @@ public class PayController {
         payService.cancelPay(payDTO);
         return Result.ok();
     }
+
+
+    /**
+     * 删除支付单
+     */
+    @ApiOperation(value = "删除支付单")
+    @PostMapping("/remove")
+    public Result removePay(@RequestBody PayDTO payDTO) {
+        log.info("删除支付单参数:{}", payDTO);
+        payService.removePayOrder(payDTO);
+        return Result.ok();
+    }
+
+
 
 
 

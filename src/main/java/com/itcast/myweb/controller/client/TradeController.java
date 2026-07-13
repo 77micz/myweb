@@ -5,13 +5,16 @@ import com.itcast.myweb.common.pojo.PageResult;
 import com.itcast.myweb.common.pojo.Result;
 import com.itcast.myweb.domain.dto.OrderDTO;
 import com.itcast.myweb.domain.dto.OrderPageDTO;
+import com.itcast.myweb.domain.dto.PayDTO;
 import com.itcast.myweb.domain.vo.OrderDetailVO;
 import com.itcast.myweb.domain.vo.OrderVO;
+import com.itcast.myweb.service.client.PayService;
 import com.itcast.myweb.service.client.TradeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,30 +29,53 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TradeController {
 
+    //对用户暴露交易接口，不直接调用支付服务，而是通过交易服务调用支付服务
 
-    // 交易服务
+
+    /**
+     * 交易服务
+     */
     private final TradeService tradeService;
+
+    /**
+     * 支付服务
+     */
+    private final PayService payService;
 
 
     /**
      * 创建订单
      */
+    @Transactional(rollbackFor = Exception.class)
     @PostMapping("/create")
     @ApiOperation(value = "创建订单")
     public Result createOrder(@RequestBody OrderDTO orderDTO) {
         log.info("创建订单: {}", orderDTO);
-        return Result.ok(tradeService.createOrder(orderDTO));
+        List<Long> orderIds = tradeService.createOrder(orderDTO);
+        //构建payDTO
+        PayDTO payDTO = new PayDTO();
+        payDTO.setOrderIds(orderIds);
+        payDTO.setPaymentType(orderDTO.getPaymentType());
+        payDTO.setPayChannelCode(orderDTO.getPayChannelCode());
+        //调用支付服务创建支付单
+        payService.createPayOrder(payDTO);
+        return Result.ok();
     }
 
 
     /**
      * 删除订单
      */
+    @Transactional(rollbackFor = Exception.class)
     @PutMapping("/remove/{id}")
     @ApiOperation(value = "删除订单")
     public Result deleteOrder(@PathVariable Long id) {
         log.info("删除订单: {}", id);
         tradeService.removeById(id);
+        //删除支付单
+        PayDTO payDTO = new PayDTO();
+        payDTO.setOrderIds(List.of(id));
+        payService.removePayOrder(payDTO);
         return Result.ok();
     }
 
@@ -69,11 +95,16 @@ public class TradeController {
     /**
      * 取消订单
      */
+    @Transactional(rollbackFor = Exception.class)
     @PutMapping("/cancel/{id}")
     @ApiOperation(value = "取消订单")
     public Result cancel(@PathVariable Long id) {
         log.info("取消订单: {}", id);
         tradeService.cancel(id);
+        //取消支付单
+        PayDTO payDTO = new PayDTO();
+        payDTO.setOrderIds(List.of(id));
+        payService.cancelPay(payDTO);
         return Result.ok();
     }
 

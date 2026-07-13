@@ -42,17 +42,23 @@ public class PayOrder implements Serializable {
     @ApiModelProperty(value = "支付单号")
     private Long payOrderNo;
 
+    @ApiModelProperty(value = "订单号")
+    private Long bizOrderNo;
+
     @ApiModelProperty(value = "支付用户id")
     private Long userId;
 
     @ApiModelProperty(value = "支付渠道编码")
     private String payChannelCode;
 
+    @ApiModelProperty(value = "支付方式，（1=支付宝，2=微信，3=余额）")
+    private PaymentType paymentType;
+
     @ApiModelProperty(value = "支付金额")
     private BigDecimal amount;
 
-    @ApiModelProperty(value = "支付类型，1：h5,2:小程序，3：公众号，4：扫码，5：余额支付")
-    private PayType payType;
+//    @ApiModelProperty(value = "支付类型，1：h5,2:小程序，3：公众号，4：扫码，5：余额支付")
+//    private PayType payType;
 
     @ApiModelProperty(value = "支付状态，1:待支付，2：支付超时，3：支付取消，4：支付成功")
     private PayStatus status;

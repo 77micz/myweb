@@ -21,6 +21,13 @@ spring:
     username: ${db.username}
     password: ${db.password}
 
+  rabbitmq:
+    host: 192.168.200.152
+    port: 5672
+    username: myweb
+    password: myweb
+    virtual-host: /myweb
+
 
 
 

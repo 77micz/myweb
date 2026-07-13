@@ -22,8 +22,8 @@ public class PayDTO {
     //订单ID列表
     private List<Long> orderIds;
 
-    //支付方式
-    private PayType payType;
+//    //支付方式
+//    private PayType payType;
 
 
     //支付渠道编码
@@ -33,7 +33,7 @@ public class PayDTO {
     // ---------------------------
 
     //支付单号
-    private Long payOrderNo;
+    private List<Long> payOrderNos;
 
     //支付密码
     private String payPw;
