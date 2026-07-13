@@ -140,14 +140,9 @@ public class Constant {
     //支付分布式锁过期时间10秒
     public static final Long PAY_LOCK_TTL = 15L;
 
-    //取消支付分布式锁key前缀
-    public static final String PAY_CANCEL_LOCK_KEY = "pay:cancel:lock:";
-    //取消支付分布式锁过期时间15秒
-    public static final Long PAY_CANCEL_LOCK_TTL = 15L;
 
-
-    //订单超时时间15分钟
-    public static final Integer ORDER_TIMEOUT_TIME = 15 * 60 * 1000;
+    //订单超时时间60秒
+    public static final Integer ORDER_TIMEOUT_TIME = 60 * 1000;
     //超时队列名称
     public static final String ORDER_TIMEOUT_QUEUE = "timeout.queue";
     //超时交换机名称

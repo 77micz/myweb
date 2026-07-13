@@ -253,9 +253,9 @@ public class PayServiceImpl implements PayService {
         Long payOrderNo = payOrder.getPayOrderNo();
 
 
-        //判断支付单状态是否为待支付
-        if (!payOrder.getStatus().equals(PayStatus.PENDING_PAY)) {
-            throw new PayOrderStatusException("支付单状态异常，不能取消");
+        //判断支付单状态是否为支付成功
+        if (payOrder.getStatus().equals(PayStatus.PAY_SUCCESS)) {
+            throw new PayOrderStatusException("支付单已支付，不能取消");
         }
 
 
@@ -327,6 +327,7 @@ public class PayServiceImpl implements PayService {
             payOrder.setPayChannelCode(payChannelCode);
             payOrder.setPaymentType(paymentType);
             payOrder.setStatus(PayStatus.PENDING_PAY);
+            payOrders.add(payOrder);
         }
 
         //批量插入支付单
